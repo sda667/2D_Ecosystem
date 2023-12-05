@@ -24,6 +24,9 @@ class mainWindow(QWidget):
         self.forest_pixmap = QPixmap(self.config['TilesPath']['path_forest'])
         self.mountain_pixmap = QPixmap(self.config['TilesPath']['path_mountain'])
 
+        #Taille de la grille
+        self.grid_size = self.config['GridSize']['grid_size_factor']
+
 
     
     def showWorld(self, world: wd.World):
@@ -32,19 +35,21 @@ class mainWindow(QWidget):
         for i in range(i_size):
             for j in range(j_size):
                 case = grid[(i, j)]
-                print(case.case_type)
                 label_image = QLabel(self)
-                label_image.setGeometry(i*50, j*50, 50, 50)
-                label_image.setPixmap(self.forest_pixmap)
-
+                label_image.setGeometry(i*(self.grid_size//i_size), j*((self.grid_size+j_size)//i_size), self.grid_size//i_size, self.grid_size//i_size)
+                if case.case_type == "FOREST":
+                    label_image.setPixmap(self.forest_pixmap)
+                elif case.case_type == "MOUNTAIN":
+                    label_image.setPixmap(self.mountain_pixmap)
         
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = mainWindow(1280, 720)
-    window.show()
-    world = wd.World(10, 10)
+    
+    world = wd.World(20, 20)
     world.create_world()
     window.showWorld(world)
-
+    window.show()
     
     sys.exit(app.exec_())
+

@@ -2,5 +2,10 @@
     "TilesPath": {
         "path_forest": "forest_image.jpg",
         "path_mountain": "mountain_image.jpg"
+    },
+    "GridSize": {
+        "grid_size_factor": 500,
+        "path_category2": "image2.jpg"
     }
 }
+

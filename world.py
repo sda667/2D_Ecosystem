@@ -15,6 +15,7 @@ class CaseForest(Case):
         super().__init__()
         self.name = "FOREST"
 
+    @property
     def case_type(self) -> str:
         return self.name
 
