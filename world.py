@@ -18,6 +18,15 @@ class CaseForest(Case):
     @property
     def case_type(self) -> str:
         return self.name
+    
+class CaseMountain(Case):
+    def __init__(self) -> None:
+        super().__init__()
+        self.name = "MOUNTAIN"
+
+    @property
+    def case_type(self) -> str:
+        return self.name
 
 class World():
     def __init__(self, x_size: int, y_size: int) -> None:
@@ -39,6 +48,8 @@ class World():
     def setCase(self, x: int, y: int, type: str):
         if type == "FOREST":
             self.grid[(x,y)] = CaseForest()
+        elif type == "MOUNTAIN":
+            self.grid[(x,y)] = CaseMountain()
 
 
         

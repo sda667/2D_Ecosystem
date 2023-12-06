@@ -6,6 +6,15 @@
     "GridSize": {
         "grid_size_factor": 500,
         "path_category2": "image2.jpg"
+    },
+    "WindowSettings": {
+        "window_width": 1280,
+        "window_height": 720
+    },
+    "WorldSettings": {
+        "world_x_size": 30,
+        "world_y_size": 30
     }
 }
+
 

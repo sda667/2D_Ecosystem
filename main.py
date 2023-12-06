@@ -43,13 +43,24 @@ class mainWindow(QWidget):
                     label_image.setPixmap(self.mountain_pixmap)
         
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = mainWindow(1280, 720)
+    with open('config.json') as f:
+            config = json.load(f)
+    width = config['WindowSettings']['window_width']
+    height = config['WindowSettings']['window_height']
+    world_x_size = config["WorldSettings"]['world_x_size']
+    world_y_size = config["WorldSettings"]['world_y_size']
     
-    world = wd.World(20, 20)
+    app = QApplication(sys.argv)
+    window = mainWindow(width, height)
+    
+    world = wd.World(world_x_size, world_y_size)
     world.create_world()
+    world.setCase(0, 0, "MOUNTAIN")
     window.showWorld(world)
     window.show()
+    
+    
+    
     
     sys.exit(app.exec_())
 
