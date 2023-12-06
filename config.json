@@ -13,7 +13,8 @@
     },
     "WorldSettings": {
         "world_x_size": 30,
-        "world_y_size": 30
+        "world_y_size": 30,
+        "test": 30
     }
 }
 
