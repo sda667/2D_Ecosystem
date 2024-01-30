@@ -1,10 +1,10 @@
 {
     "TilesPath": {
-        "path_forest": "forest_image.jpg",
-        "path_mountain": "mountain_image.jpg"
+        "path_Coral": "image/Coral.jpg",
+        "path_Sea": "image/Sea.jpg"
     },
     "GridSize": {
-        "grid_size_factor": 500,
+        "grid_size_factor": 600,
         "path_category2": "image2.jpg"
     },
     "WindowSettings": {
@@ -14,7 +14,8 @@
     "WorldSettings": {
         "world_x_size": 30,
         "world_y_size": 30,
-        "test": 30
+        "world_background": "World data/background.txt",
+        "world_creature": "World data/creature.txt"
     }
 }
 

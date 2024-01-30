@@ -10,19 +10,19 @@ class Case(ABC):
     def case_type(self) -> str:
         return self.name
     
-class CaseForest(Case):
+class CaseSea(Case):
     def __init__(self) -> None:
         super().__init__()
-        self.name = "FOREST"
+        self.name = "Sea"
 
     @property
     def case_type(self) -> str:
         return self.name
     
-class CaseMountain(Case):
+class CaseCoral(Case):
     def __init__(self) -> None:
         super().__init__()
-        self.name = "MOUNTAIN"
+        self.name = "Coral"
 
     @property
     def case_type(self) -> str:
@@ -30,6 +30,7 @@ class CaseMountain(Case):
 
 class World():
     def __init__(self, x_size: int, y_size: int) -> None:
+        # initialise the grid
         x, y = np.arange(0, x_size, 1), np.arange(0, y_size, 1)
         grid_x, grid_y = np.meshgrid(x, y)
         self.grid = np.zeros_like(grid_x, dtype=Case)  #Manipuler grid avec grid[(x, y)]
@@ -39,17 +40,21 @@ class World():
     def getGrid(self):
         return self.grid
     
-    def create_world(self):
-        for i in range(self.i_size):
-            for j in range(self.j_size):
-                self.setCase(i, j, "FOREST")
+    def create_world(self, background, foreground):
+        # create the grid depending of background file
+        with open(background) as file:
+            data = file.readlines()
+            for i in range(self.i_size):
+                for j in range(self.j_size):
+                    self.setCase(i, j, data[i][j])
+
             
 
     def setCase(self, x: int, y: int, type: str):
-        if type == "FOREST":
-            self.grid[(x,y)] = CaseForest()
-        elif type == "MOUNTAIN":
-            self.grid[(x,y)] = CaseMountain()
+        if type == "S":
+            self.grid[(x,y)] = CaseSea()
+        elif type == "C":
+            self.grid[(x,y)] = CaseCoral()
 
 
         
