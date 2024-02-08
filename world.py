@@ -1,4 +1,5 @@
 import numpy as np
+import time
 from abc import ABC, abstractmethod
 
 class Case(ABC):
@@ -43,12 +44,15 @@ class World():
     def create_world(self, background, foreground):
         # create the grid depending of background file
         with open(background) as file:
-            data = file.readlines()
+            data = file.readlines()  
+            print(data[29][59])  
+            print(len(data), len(data[0]))
             for i in range(self.i_size):
                 for j in range(self.j_size):
-                    self.setCase(i, j, data[i][j])
-
-            
+                    print(len(data), len(data[0]))
+                    #print(i, j, data[i][j])
+                    self.setCase(i, j, data[j][i])
+        
 
     def setCase(self, x: int, y: int, type: str):
         if type == "S":

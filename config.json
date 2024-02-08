@@ -4,16 +4,16 @@
         "path_Sea": "image/Sea.jpg"
     },
     "GridSize": {
-        "grid_size_factor": 600,
+        "grid_size_factor": 800,
         "path_category2": "image2.jpg"
     },
     "WindowSettings": {
-        "window_width": 1280,
-        "window_height": 720
+        "window_width": 1920,
+        "window_height": 1080
     },
     "WorldSettings": {
-        "world_x_size": 30,
-        "world_y_size": 30,
+        "world_x_size": 60,
+        "world_y_size": 60,
         "world_background": "World data/background.txt",
         "world_creature": "World data/creature.txt"
     }
