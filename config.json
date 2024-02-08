@@ -1,7 +1,7 @@
 {
     "TilesPath": {
-        "path_Coral": "image/Coral.jpg",
-        "path_Sea": "image/Sea.jpg"
+        "path_Coral": "image/Coral.png",
+        "path_Sea": "image/Sea.png"
     },
     "GridSize": {
         "grid_size_factor": 600,
@@ -15,7 +15,10 @@
         "world_x_size": 30,
         "world_y_size": 30,
         "world_background": "World data/background.txt",
-        "world_creature": "World data/creature.txt"
+        "world_creature": "World data/creatures.txt"
+    },
+    "Creatures": {
+        "Shark": "image/shark.png"
     }
 }
 
