@@ -68,6 +68,8 @@ class World():
             self.grid[(x,y)] = CaseSea()
         elif type == "C":
             self.grid[(x,y)] = CaseCoral()
+        elif type == "D":
+            self.grid[(x,y)] = DeepSea()
     
     def create_world(self, background):
         # create the grid depending of background file

@@ -2,7 +2,7 @@
     "TilesPath": {
         "Sea": "image/Sea.jpg",
         "Surface Sea": "image/Sea.jpg",
-        "Deep Sea": "image/Sea.jpg",
+        "Deep Sea": "image/DeepSea.jpg",
         "Sand": "image/Coral.jpg",
         "Land": "image/Coral.jpg",
         "Fishing Area": "image/Sea.jpg",

@@ -64,22 +64,3 @@ class GridDisplay:
     def run(self) -> None:
         thread = threading.Thread(target=self.__start_display, daemon=True)
         thread.start()
-
-
-
-
-
-
-# EXEMPLE TEST DE BOUCLE DE GAMEPLAY
-
-monde = World(60, 60)
-monde.create_world("World data/background.txt")
-grid_display = GridDisplay(monde.get_grid, cell_size=20)  # Taille d'une case en pixels
-grid_display.run()
-
-while True:
-
-    monde.set_case(15, 15, "C")
-    time.sleep(1)
-    monde.set_case(15, 15, "S")
-    time.sleep(1)
