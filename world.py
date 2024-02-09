@@ -69,7 +69,7 @@ class World():
         elif type == "C":
             self.grid[(x,y)] = CaseCoral()
     
-    def create_world(self, background, foreground):
+    def create_world(self, background):
         # create the grid depending of background file
         with open(background) as file:
             data = file.readlines()  

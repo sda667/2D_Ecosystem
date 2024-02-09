@@ -1,13 +1,13 @@
 {
     "TilesPath": {
-        "path_Sea": "image/Sea.jpg",
-        "path_SurfaceSea": "image/Sea.jpg",
-        "path_DeepSea": "image/Sea.jpg",
-        "path_Sand": "image/Coral.jpg",
-        "path_Land": "image/Coral.jpg",
-        "path_FishingArea": "image/Sea.jpg",
-        "path_Coral": "image/Coral.jpg",
-        "path_Volcano": "image/Coral.jpg"
+        "Sea": "image/Sea.jpg",
+        "Surface Sea": "image/Sea.jpg",
+        "Deep Sea": "image/Sea.jpg",
+        "Sand": "image/Coral.jpg",
+        "Land": "image/Coral.jpg",
+        "Fishing Area": "image/Sea.jpg",
+        "Coral": "image/Coral.jpg",
+        "Volcano": "image/Coral.jpg"
     },
     "GridSize": {
         "grid_size_factor": 800,
