@@ -1,7 +1,13 @@
 {
     "TilesPath": {
+        "path_Sea": "image/Sea.jpg",
+        "path_SurfaceSea": "image/Sea.jpg",
+        "path_DeepSea": "image/Sea.jpg",
+        "path_Sand": "image/Coral.jpg",
+        "path_Land": "image/Coral.jpg",
+        "path_FishingArea": "image/Sea.jpg",
         "path_Coral": "image/Coral.jpg",
-        "path_Sea": "image/Sea.jpg"
+        "path_Volcano": "image/Coral.jpg"
     },
     "GridSize": {
         "grid_size_factor": 800,
