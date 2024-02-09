@@ -21,9 +21,9 @@ def main(cell_size=15, x_size = 60, y_size=120) -> None:
     # Boucle d'action du monde (plus besoin de toucher à l'affichage)
     while True:
 
-        monde.set_case(15, 15, "C")
-        time.sleep(1)
         monde.set_case(15, 15, "S")
+        time.sleep(1)
+        monde.set_case(15, 15, "C")
         time.sleep(1)
 
 if __name__ == "__main__":
