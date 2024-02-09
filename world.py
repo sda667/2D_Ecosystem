@@ -1,5 +1,4 @@
 import numpy as np
-import time
 from abc import ABC, abstractmethod
 
 class Case(ABC):
@@ -15,19 +14,12 @@ class CaseSea(Case):
     def __init__(self) -> None:
         super().__init__()
         self.name = "Sea"
-
-    @property
-    def case_type(self) -> str:
-        return self.name
     
 class CaseCoral(Case):
     def __init__(self) -> None:
         super().__init__()
         self.name = "Coral"
 
-    @property
-    def case_type(self) -> str:
-        return self.name
 
 class World():
     def __init__(self, x_size: int, y_size: int) -> None:
