@@ -1,7 +1,6 @@
 import typing
 from PyQt5 import QtCore
 from PyQt5.QtCore import QTimer
-
 import world as wd
 import numpy as np
 import sys
@@ -56,7 +55,7 @@ class mainWindow(QWidget):
 
     def showWorld(self):
         # create Qlabel to show the world
-        grid = self.world.getGrid
+        grid = self.world.get_grid
         i_size, j_size = grid.shape
         square_size = (self.grid_size//i_size)
         for i in range(i_size):

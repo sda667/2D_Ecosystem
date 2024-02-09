@@ -30,28 +30,19 @@ class World():
         self.i_size, self.j_size = x_size, y_size
 
     @property
-    def getGrid(self):
+    def get_grid(self):
         return self.grid
+    
+    def set_case(self, x: int, y: int, type: str):
+        if type == "S":
+            self.grid[(x,y)] = CaseSea()
+        elif type == "C":
+            self.grid[(x,y)] = CaseCoral()
     
     def create_world(self, background, foreground):
         # create the grid depending of background file
         with open(background) as file:
             data = file.readlines()  
-            print(data[29][59])  
-            print(len(data), len(data[0]))
-            for i in range(self.i_size):
-                for j in range(self.j_size):
-                    print(len(data), len(data[0]))
-                    #print(i, j, data[i][j])
-                    self.setCase(i, j, data[j][i])
-        
-
-    def setCase(self, x: int, y: int, type: str):
-        if type == "S":
-            self.grid[(x,y)] = CaseSea()
-        elif type == "C":
-            self.grid[(x,y)] = CaseCoral()
-
-
-        
-
+            for j, line in enumerate(data):
+                for i, case_type in enumerate(line):
+                    self.set_case(i, j, case_type)
