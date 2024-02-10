@@ -9,6 +9,14 @@
         "Coral": "image/Coral.jpg",
         "Volcano": "image/Coral.jpg"
     },
+    "EntityPath": {
+        "Crab": "image/Sea.jpg",
+        "Medusa": "image/Sea.jpg",
+        "Plankton": "image/Sea.jpg",
+        "Fish": "image/Sea.jpg",
+        "Shark": "image/Sea.jpg",
+        "Orca": "image/Sea.jpg"
+    },
     "GridSize": {
         "grid_size_factor": 800,
         "path_category2": "image2.jpg"
