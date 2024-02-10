@@ -1,6 +1,7 @@
 import numpy as np
 from abc import ABC, abstractmethod
 
+
 class Case(ABC):
     def __init__(self) -> None:
         super().__init__()
@@ -49,6 +50,30 @@ class Volcano(Case):
     def __init__(self) -> None:
         super().__init__()
         self.name = "Volcano"
+
+
+class Entity(ABC):
+    def __init__(self) -> None:
+        super().__init__()
+        self.name = "NONE"
+        self.type = "NONE"
+        self.age = 0
+        self.hunger = 0
+    
+    @property
+    def entity_name(self) -> str:
+        return self.name    
+    @property
+    def entity_type(self) -> str:
+        return self.type
+    @property
+    def entity_age(self) -> int:
+        return self.age
+    @property
+    def entity_hunger(self) -> int:
+        return self.hunger
+
+
 
 
 class World():
