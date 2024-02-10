@@ -52,11 +52,12 @@ class Volcano(Case):
         self.name = "Volcano"
 
 
+
 class Entity(ABC):
     def __init__(self) -> None:
         super().__init__()
         self.name = "NONE"
-        self.type = "NONE"
+        self.type = 0
         self.age = 0
         self.hunger = 0
     
@@ -64,7 +65,7 @@ class Entity(ABC):
     def entity_name(self) -> str:
         return self.name    
     @property
-    def entity_type(self) -> str:
+    def entity_type(self) -> int:
         return self.type
     @property
     def entity_age(self) -> int:
@@ -73,6 +74,39 @@ class Entity(ABC):
     def entity_hunger(self) -> int:
         return self.hunger
 
+class Crab(Entity):
+    def __init__(self) -> None:
+        super().__init__()
+        self.name = "Crab"
+
+class Medusa(Entity):
+    def __init__(self) -> None:
+        super().__init__()
+        self.name = "Medusa"
+
+class Plankton(Entity):
+    def __init__(self) -> None:
+        super().__init__()
+        self.name = "Plankton"
+        self.type = 1
+
+class Fish(Entity):
+    def __init__(self) -> None:
+        super().__init__()
+        self.name = "Fish"
+        self.type = 2
+
+class Shark(Entity):
+    def __init__(self) -> None:
+        super().__init__()
+        self.name = "Shark"
+        self.type = 3
+
+class Orca(Entity):
+    def __init__(self) -> None:
+        super().__init__()
+        self.name = "Orca"
+        self.type = 4
 
 
 
