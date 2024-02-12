@@ -4,8 +4,8 @@ class controller():
         self.world = world
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
     
-    # DEPLACEMENT IDLE D'UNE ENTITE (STOCHASTIQUE)
-    def idle_update(self, x, y):
+    # DEPLACEMENT IDLE D'UNE ENTITE (STOCHASTIQUE, MARCHE ALEATOIRE A MEMOIRE)
+    def __idle_update(self, x, y):
         entity = self.world.entities[(x, y)]
         name = entity.entity_name
         movement = entity.get_last_movement()
@@ -19,17 +19,18 @@ class controller():
         weights = weight_dict.get(movement, [0.25]*4)
         dx, dy = random.choices(self.directions, weights=weights)[0]
         new_x, new_y = x + dx, y + dy
-        # On déplace l'entité
-        self.world.clear_entity(x, y)
-        self.world.set_entity(name, new_x, new_y)
-        # On met à jour le dernier mouvement
-        entity.set_last_movement(dx, dy)
+        # On déplace l'entité (si la case n'est pas une case d'air)
+        if self.world.grid[new_x, new_y] != 0:
+            self.world.clear_entity(x, y)
+            self.world.set_entity(name, new_x, new_y)
+            # On met à jour le dernier mouvement
+            entity.set_last_movement(dx, dy)
 
     # UPDATE D'UNE ENTITE
-    def update_entity(self, x, y):
+    def __update_entity(self, x, y):
 
         #UPDATE QUAND RIEN NE SE PASSE (PAS DE PROIE, PAS DE PREDATEUR, ETC.)
-        self.idle_update(x, y)
+        self.__idle_update(x, y)
 
     # UPDATE DES ENTITES
     def update_entities(self):
@@ -42,6 +43,6 @@ class controller():
                     entity_positions.add((i, j))  # Add entity position to the set
         # Update des entités
         for position in entity_positions:
-            self.update_entity(*position)  # Update each entity position
+            self.__update_entity(*position)  # Update each entity position
 
             

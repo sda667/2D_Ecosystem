@@ -7,6 +7,7 @@ class Entity(ABC):
         self.age = 0
         self.hunger = 0
         self.last_movement = (0,0)
+        self.depth = ("Surface Sea", "Sea", "Deep Sea")
     
     @property
     def entity_name(self) -> str:
@@ -56,6 +57,7 @@ class Shark(Entity):
         super().__init__()
         self.name = "Shark"
         self.type = 3
+        self.depth = ("Surface Sea", "Sea")
 
 class Orca(Entity):
     def __init__(self) -> None:
@@ -63,6 +65,7 @@ class Orca(Entity):
         self.name = "Orca"
         # super predator , it can eat all creature
         self.type = 4
+        self.depth = ("Surface Sea", "Sea", "Deep Sea")
 
     @property
     def Creature_type(self) -> str:
