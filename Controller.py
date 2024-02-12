@@ -26,8 +26,11 @@ class controller():
             # On met à jour le dernier mouvement
             entity.set_last_movement(dx, dy)
 
+    # DEPLACEMENT D'UN PREDATEUR (CHASSE, SE DEPLACE VERS LA PROIE LA PLUS PROCHE, S'IL Y EN A UNE A PORTEE)
+    def __predator_update(self, x, y, entity_positions):
+        pass
     # UPDATE D'UNE ENTITE
-    def __update_entity(self, x, y):
+    def __update_entity(self, x, y, entity_positions):
 
         #UPDATE QUAND RIEN NE SE PASSE (PAS DE PROIE, PAS DE PREDATEUR, ETC.)
         self.__idle_update(x, y)
@@ -43,6 +46,6 @@ class controller():
                     entity_positions.add((i, j))  # Add entity position to the set
         # Update des entités
         for position in entity_positions:
-            self.__update_entity(*position)  # Update each entity position
+            self.__update_entity(*position, entity_positions)  # Update each entity position
 
             
