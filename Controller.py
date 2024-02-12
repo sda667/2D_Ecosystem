@@ -5,35 +5,31 @@ class controller():
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
     
     # DEPLACEMENT IDLE D'UNE ENTITE (STOCHASTIQUE)
-    def idle_entity(self, x, y):
+    def idle_update(self, x, y):
         entity = self.world.entities[(x, y)]
-        if entity.entity_name == "Shark":
-            if entity.get_last_movement() == (0, 0):
-                dx, dy = random.choice(self.directions)
-            else:
-                if entity.get_last_movement() == (-1, 0):
-                    weights = [0.1, 0.7, 0.1, 0.1]
-                
-                elif entity.get_last_movement() == (0, 1):
-                    weights = [0.1, 0.1, 0.7, 0.1]
-                
-                elif entity.get_last_movement() == (1, 0):
-                    weights = [0.7, 0.1, 0.1, 0.1]
-
-                elif entity.get_last_movement() == (0, -1):
-                    weights = [0.1, 0.1, 0.1, 0.7]
-                dx, dy = random.choices(self.directions, weights=weights)[0] 
-            new_x = x + dx
-            new_y = y + dy
-
-            self.world.clear_entity(x, y)
-            self.world.set_entity("Shark", new_x, new_y)
-            
-            entity.set_last_movement(dx, dy)
+        name = entity.entity_name
+        movement = entity.get_last_movement()
+        weight_dict = {
+            (-1, 0): [0.1, 0.7, 0.1, 0.1],
+            (0, 1): [0.1, 0.1, 0.7, 0.1],
+            (1, 0): [0.7, 0.1, 0.1, 0.1],
+            (0, -1): [0.1, 0.1, 0.1, 0.7]
+        }
+        #Si le dernier mouvement est inconnu, on prend une direction aléatoire, sinon on prend une direction aléatoire en privilégiant le dernier mouvement
+        weights = weight_dict.get(movement, [0.25]*4)
+        dx, dy = random.choices(self.directions, weights=weights)[0]
+        new_x, new_y = x + dx, y + dy
+        # On déplace l'entité
+        self.world.clear_entity(x, y)
+        self.world.set_entity(name, new_x, new_y)
+        # On met à jour le dernier mouvement
+        entity.set_last_movement(dx, dy)
 
     # UPDATE D'UNE ENTITE
     def update_entity(self, x, y):
-        self.idle_entity(x, y)
+
+        #UPDATE QUAND RIEN NE SE PASSE (PAS DE PROIE, PAS DE PREDATEUR, ETC.)
+        self.idle_update(x, y)
 
     # UPDATE DES ENTITES
     def update_entities(self):
