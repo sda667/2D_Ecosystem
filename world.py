@@ -12,36 +12,48 @@ class World():
         self.i_size, self.j_size = x_size, y_size
         self.entities = np.zeros_like(grid_x, dtype=Entity)
 
+    # GETTER DE LA GRILLE
     @property
     def get_grid(self):
         return self.grid
 
+    # DEFINIR LE TYPE DE CASE (MER, CORAIL, ETC.)
     def set_case(self, x: int, y: int, type: str):
         if type == "S":
+            self.grid[(x,y)] = SurfaceSea()
+        elif type == "M":
             self.grid[(x,y)] = CaseSea()
         elif type == "C":
             self.grid[(x,y)] = CaseCoral()
         elif type == "D":
             self.grid[(x,y)] = DeepSea()
+        elif type == ".":
+            pass
     
-    def create_world(self, background, foreground):
-        # create the grid depending of background file
-        with open(background) as file:
-            data = file.readlines()
-            for j, line in enumerate(data):
-                for i, case_type in enumerate(line):
-                    self.set_case(i, j, case_type)
-        self.get_entity(foreground)
-    def get_entity(self,foreground):
+    # CREER LES ENTITES
+    def create_entities(self,foreground):
         with open(foreground) as file:
             data = file.readlines()
             for entity in data:
                 entity_data = entity.split()
                 entity_name = entity_data[0]
-                self.set_Entity(entity_name, int(entity_data[1]), int(entity_data[2]))
-    def set_Entity(self,name, x, y):
+                self.set_entity(entity_name, int(entity_data[1]), int(entity_data[2]))
+                
+    # CREER LE MONDE (A PARTIR DE DEUX FICHIERS, UN POUR LE FOND ET UN POUR LE PREMIER PLAN)
+    def create_world(self, background, foreground):
+        with open(background) as file:
+            data = file.readlines()
+            for j, line in enumerate(data):
+                for i, case_type in enumerate(line):
+                    self.set_case(i, j, case_type)
+        self.create_entities(foreground)
+
+    # POSE UNE ENTITE SUR UNE CASE
+    def set_entity(self,name, x, y):
         if name == "Shark":
             self.entities[x, y] = Shark()
+
+    # ENLEVE UNE ENTITE D'UNE CASE
     def clear_entity(self, x, y):
         self.entities[(x, y)] = 0
     

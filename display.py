@@ -37,21 +37,29 @@ class GridDisplay:
         for entity_type, path in self.config["EntityPath"].items():
             entities[entity_type] = pg.image.load(path).convert()
         return entities
+    
     # AFFICHER LA GRILLE
     def __draw_grid(self) -> None:
         # Couleur de fond
-        self.screen.fill((255, 255, 255))
+        background_image = pg.image.load("image/Ocean.png").convert()
+        resized_image = pg.transform.scale(background_image, (self.screen_size[0] // 5, self.screen_size[1] // 5))  # Resize the image
+        # Répéter l'image en boucle sur le haut de l'écran
+        for x in range(0, self.screen_size[0], resized_image.get_width()):
+            self.screen.blit(resized_image, (x, 0))
+        self.screen.blit(resized_image, (0, 0))  # Position the image at the top
         # Affichage des cases
         for i in range(self.world.grid.shape[0]):
             for j in range(self.world.grid.shape[1]):
-                # Récupération de l'image de la case
-                tile_type = self.world.grid[i, j].case_type
-                tile_image = self.tiles.get(tile_type)
-                # Redimensionnement de l'image
-                resized_image = pg.transform.scale(tile_image, (self.cell_size, self.cell_size))
-                # Affichage de l'image
-                cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
-                self.screen.blit(resized_image, cell_rect)
+                if self.world.grid[i, j] != 0:
+                    # Récupération de l'image de la case
+                    tile_type = self.world.grid[i, j].case_type
+                    tile_image = self.tiles.get(tile_type)
+                    # Redimensionnement de l'image
+                    resized_image = pg.transform.scale(tile_image, (self.cell_size, self.cell_size))
+                    # Affichage de l'image
+                    cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
+                    self.screen.blit(resized_image, cell_rect)
+
     # AFFICHER LES ENTITES
     def __draw_entities(self) -> None:
         for i in range(self.world.entities.shape[0]):
@@ -61,13 +69,14 @@ class GridDisplay:
                     entity_type = self.world.entities[i, j].entity_name
                     entity_image = self.entities.get(entity_type)
                     # Redimensionnement de l'image
-                    resized_image = pg.transform.scale(entity_image, (self.cell_size, self.cell_size))
+                    resized_image = pg.transform.scale(entity_image, (self.cell_size * 3, self.cell_size * 3))
                     # Mask to remove white color
                     resized_image.set_colorkey((255, 255, 255))
                     # Affichage de l'image
                     cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
                     self.screen.blit(resized_image, cell_rect)
         pg.display.flip()
+        
     # AFFICHER LA GRILLE EN BOUCLE
     def __start_display(self) -> None:
         running = True
