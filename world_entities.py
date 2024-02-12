@@ -6,6 +6,7 @@ class Entity(ABC):
         self.type = 0
         self.age = 0
         self.hunger = 0
+        self.last_movement = (0,0)
     
     @property
     def entity_name(self) -> str:
@@ -19,6 +20,12 @@ class Entity(ABC):
     @property
     def entity_hunger(self) -> int:
         return self.hunger
+    
+    def get_last_movement(self) -> int:
+        return self.last_movement
+
+    def set_last_movement(self, dx: int, dy: int) -> None:
+        self.last_movement = (dx, dy)
 
 class Plankton(Entity):
     def __init__(self) -> None:
