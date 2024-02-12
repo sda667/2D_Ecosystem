@@ -120,6 +120,9 @@ class Orca(Entity):
     @property
     def get_position(self) -> tuple:
         return self.position
+
+
+
 class World():
     def __init__(self, x_size: int, y_size: int) -> None:
         # initialise the grid
@@ -144,7 +147,7 @@ class World():
     def create_world(self, background, foreground):
         # create the grid depending of background file
         with open(background) as file:
-            data = file.readlines()  
+            data = file.readlines()
             for j, line in enumerate(data):
                 for i, case_type in enumerate(line):
                     self.set_case(i, j, case_type)
