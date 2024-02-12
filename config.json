@@ -1,24 +1,35 @@
 {
     "TilesPath": {
-        "path_Coral": "image/Coral.png",
-        "path_Sea": "image/Sea.png"
+        "Sea": "image/Sea.jpg",
+        "Surface Sea": "image/Sea.jpg",
+        "Deep Sea": "image/DeepSea.jpg",
+        "Sand": "image/Coral.jpg",
+        "Land": "image/Coral.jpg",
+        "Fishing Area": "image/Sea.jpg",
+        "Coral": "image/Coral.jpg",
+        "Volcano": "image/Coral.jpg"
+    },
+    "EntityPath": {
+        "Crab": "image/Sea.jpg",
+        "Medusa": "image/Sea.jpg",
+        "Plankton": "image/Sea.jpg",
+        "Fish": "image/Sea.jpg",
+        "Shark": "image/Shark.jpg",
+        "Orca": "image/Sea.jpg"
     },
     "GridSize": {
-        "grid_size_factor": 600,
+        "grid_size_factor": 800,
         "path_category2": "image2.jpg"
     },
     "WindowSettings": {
-        "window_width": 1280,
-        "window_height": 720
+        "window_width": 1920,
+        "window_height": 1080
     },
     "WorldSettings": {
-        "world_x_size": 30,
-        "world_y_size": 30,
+        "world_x_size": 60,
+        "world_y_size": 60,
         "world_background": "World data/background.txt",
         "world_creature": "World data/creatures.txt"
-    },
-    "Creatures": {
-        "Shark": "image/shark.png"
     }
 }
 
