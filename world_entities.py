@@ -7,7 +7,7 @@ class Entity(ABC):
         self.name = "NONE"
         self.type = 0
         self.age = 0
-        self.age_span = (0, 1)
+        self.life_span = (0, 1)
         self.sex = ("FEMALE", "MALE")
         self.zone = ("Near Beach", "Mid Ocean", "Far Ocean")
         self.life_style = "individual"
@@ -56,11 +56,11 @@ class Entity(ABC):
         self.life_style = life_style
 
     @property
-    def entity_age_span(self) -> str:
-        return self.age_span
+    def entity_life_span(self) -> str:
+        return self.life_span
 
-    def set_entity_age_span(self, max_age: tuple):
-        self.age_span = max_age
+    def set_entity_life_span(self, max_age: tuple):
+        self.life_span = max_age
 
     @property
     def entity_zone(self) -> str:
@@ -89,7 +89,8 @@ class Plankton(Entity):
         self.set_entity_name("Plankton")
         # lower the type, the lower the creature are in the food chain.
         self.set_entity_type(0)
-        self.set_entity_zone("Sea")
+        self.set_entity_depth("Surface Sea")
+        self.set_entity_zone(("Near Beach", "Mid Ocean"))
 
 
 class Crab(Entity):
@@ -97,7 +98,7 @@ class Crab(Entity):
         super().__init__()
         self.set_entity_name("Crab")
         self.set_entity_type(1)
-        self.set_entity_age_span((3, 5))
+        self.set_entity_life_span((3, 5))
         self.set_entity_depth("Deep Sea")
         self.set_entity_zone("Near Beach")
 
@@ -107,8 +108,8 @@ class Medusa(Entity):
         super().__init__()
         self.set_entity_name("Medusa")
         self.set_entity_type(1)
-        self.set_entity_age_span((1, 3))
-        self.set_entity_depth("Surface Sea")
+        self.set_entity_life_span((1, 3))
+        self.set_entity_depth(("Surface Sea", "Sea"))
         self.set_entity_zone(("Near Beach", "Mid Ocean"))
 
 
@@ -117,7 +118,7 @@ class Fish(Entity):
         super().__init__()
         self.set_entity_name("Fish")
         self.set_entity_type(1)
-        self.set_entity_age_span((2, 5))
+        self.set_entity_life_span((2, 5))
         self.set_entity_zone(("Near Beach", "Mid Ocean"))
         self.set_entity_depth(("Surface Sea", "Sea"))
 
@@ -128,7 +129,7 @@ class Shark(Entity):
         self.set_entity_name("Shark")
         self.set_entity_type(3)
         self.set_entity_depth(("Surface Sea", "Sea"))
-        self.set_entity_age_span((20, 30))
+        self.set_entity_life_span((20, 30))
         self.set_entity_zone(("Near Beach", "Mid Ocean", "Far Ocean"))
 
 
@@ -140,6 +141,6 @@ class Orca(Entity):
         self.set_entity_type(4)
         self.set_entity_depth(("Surface Sea", "Sea"))
         self.set_entity_life_style("Group")
-        self.set_entity_age_span((50, 90))
+        self.set_entity_life_span((50, 90))
         self.set_entity_zone(("Near Beach", "Mid Ocean", "Far Ocean"))
 
