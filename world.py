@@ -49,7 +49,7 @@ class World():
         self.create_entities(foreground)
 
     # POSE UNE ENTITE SUR UNE CASE
-    def set_entity(self,name, x, y):
+    def set_entity(self, name, x, y):
         if name == "Shark":
             self.entities[x, y] = Shark()
 

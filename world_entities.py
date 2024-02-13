@@ -15,6 +15,10 @@ class Entity(ABC):
         self.last_movement = (0, 0)
         self.depth = ("Surface Sea", "Sea", "Deep Sea")
 
+    #@abstractmethod
+    #def brain(self, entities_positiions):
+    #    pass
+
     @property
     def entity_name(self) -> str:
         return self.name

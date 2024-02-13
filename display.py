@@ -84,6 +84,8 @@ class GridDisplay:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
+                elif event.type == pg.MOUSEBUTTONDOWN:
+                    pass
             self.__draw_grid()
             self.__draw_entities()
             self.clock.tick(10) # 10 FPS

@@ -32,9 +32,15 @@ class controller():
     # UPDATE D'UNE ENTITE
     def __update_entity(self, x, y, entity_positions):
 
-        #UPDATE QUAND RIEN NE SE PASSE (PAS DE PROIE, PAS DE PREDATEUR, ETC.)
+        #entity = self.world.entities[(x, y)]
+        ## not implemented yet , the entity think about what to do
+        #Action = entity.brain(entity_positions)
+        #if Action == "idle":
+        #    #UPDATE QUAND RIEN NE SE PASSE (PAS DE PROIE, PAS DE PREDATEUR, ETC.)
+        #    self.__idle_update(x, y)
+        #elif Action == "predation":
+        #    self.__predator_update(x, y, entity_positions)
         self.__idle_update(x, y)
-
     # UPDATE DES ENTITES
     def update_entities(self):
         # Set des positions des entités
