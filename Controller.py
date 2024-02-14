@@ -1,10 +1,22 @@
+import math
 import random
+# USING priority queue used in project 311
+from priority_queue import PriorityQueue
+
+RIGHT = 0
+LEFT = 1
+UP = 2
+DOWN = 3
+
 class controller():
     def __init__(self,world):
         self.world = world
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
     
     # DEPLACEMENT IDLE D'UNE ENTITE (STOCHASTIQUE, MARCHE ALEATOIRE A MEMOIRE)
+    def move(self, entity, start, end):
+        self.world.clear_entity(*start)
+        self.world.set_entity(entity.entity_name, *end)
     def __idle_update(self, x, y):
         entity = self.world.entities[(x, y)]
         name = entity.entity_name
@@ -20,27 +32,87 @@ class controller():
         dx, dy = random.choices(self.directions, weights=weights)[0]
         new_x, new_y = x + dx, y + dy
         # On déplace l'entité (si la case n'est pas une case d'air)
-        if self.world.grid[new_x, new_y] != 0:
-            self.world.clear_entity(x, y)
-            self.world.set_entity(name, new_x, new_y)
-            # On met à jour le dernier mouvement
+        if self.world.Inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0 and self.world.entities[new_x, new_y] == 0:
+            self.move(entity, (x, y), (new_x, new_y))
             entity.set_last_movement(dx, dy)
 
     # DEPLACEMENT D'UN PREDATEUR (CHASSE, SE DEPLACE VERS LA PROIE LA PLUS PROCHE, S'IL Y EN A UNE A PORTEE)
     def __predator_update(self, x, y, entity_positions):
-        pass
+        myself = self.world.entities[(x, y)]
+        preys = []
+        # GETTING LIST OF PREY THAT YOU CAN EAT
+        for entity_position in entity_positions:
+            if entity_position != (x, y):
+                entity = self.world.entities[entity_position]
+                if entity.entity_type < myself.entity_type:
+                    preys.append(entity_positions)
+        # FIND THE CLOSEST PREDATOR FROM THE PREDATOR LIST
+        closest_prey = None
+        distance = math.inf
+        for prey in preys:
+            if distance < self.heuristique((x, y), prey):
+                distance = self.heuristique((x, y), prey)
+                closest_prey = prey
+        # PATH TO THE PREY
+        actions = self.astar((x, y), closest_prey)
+        if len(actions) != 0:
+            # take the first action from the list of actions to reach the prey
+            action = actions[0]
+            dx, dy = self.directions[action]
+            new_x, new_y = x + dx, y + dy
+            entity = self.world.entities[(x, y)]
+            if self.world.Inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0:
+                self.move(entity, (x, y), (new_x, new_y))
+                entity.set_last_movement(dx, dy)
+
+    # DEPLACEMENT VERS LA CASE LA PLUS ELOIGNER DU PREDATEUR LE PLUS PROCHE
+    def __flee_update(self, x, y, entity_positions):
+        myself = self.world.entities[(x, y)]
+        enemies = []
+        # GETTING LIST OF PREDATOR THAT CAN EAT YOU
+        for entity_position in entity_positions:
+            if entity_position != (x, y):
+                entity = self.world.entities[entity_position]
+                if entity.entity_type > myself.entity_type:
+                    enemies.append(entity_position)
+        # FIND THE CLOSEST PREDATOR FROM THE PREDATOR LIST
+        closest_enemy = None
+        distance = math.inf
+        for enemy in enemies:
+            if distance < self.heuristique((x, y), enemy):
+                distance = self.heuristique((x, y), enemy)
+                closest_enemy = enemy
+        # TARGET TO GO TO FLEE FROM THE PREDATOR
+        dx = closest_enemy[0] - x
+        dy = closest_enemy[1] - y
+        target_position = (x-dx, y-dy)
+        # GETTING PATH TO IT
+        actions = self.astar((x, y), target_position)
+        if len(actions) != 0:
+            # take the first action from the list of actions to escape the predator
+            action = actions[0]
+            dx, dy = self.directions[action]
+            new_x, new_y = x + dx, y + dy
+            entity = self.world.entities[(x, y)]
+            if self.world.Inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0:
+                self.move(entity, (x, y), (new_x, new_y))
+                entity.set_last_movement(dx, dy)
+
+
     # UPDATE D'UNE ENTITE
     def __update_entity(self, x, y, entity_positions):
 
-        #entity = self.world.entities[(x, y)]
-        ## not implemented yet , the entity think about what to do
-        #Action = entity.brain(entity_positions)
-        #if Action == "idle":
-        #    #UPDATE QUAND RIEN NE SE PASSE (PAS DE PROIE, PAS DE PREDATEUR, ETC.)
-        #    self.__idle_update(x, y)
-        #elif Action == "predation":
-        #    self.__predator_update(x, y, entity_positions)
-        self.__idle_update(x, y)
+        entity = self.world.entities[(x, y)]
+        # not implemented yet , the entity think about what to do
+        Action = entity.brain(entity_positions)
+        if Action == "idle":
+            #UPDATE QUAND RIEN NE SE PASSE (PAS DE PROIE, PAS DE PREDATEUR, ETC.)
+            self.__idle_update(x, y)
+        elif Action == "predation":
+            self.__predator_update(x, y, entity_positions)
+        elif Action == "flee":
+            self.__flee_update(x, y, entity_positions)
+
     # UPDATE DES ENTITES
     def update_entities(self):
         # Set des positions des entités
@@ -54,4 +126,39 @@ class controller():
         for position in entity_positions:
             self.__update_entity(*position, entity_positions)  # Update each entity position
 
-            
+    # GET SHORTEST PATH BETWEEN A POINT AND ANOTHER POINT USING ASTAR
+    def astar(self, current_position, target_position):
+        stack = PriorityQueue()
+        stack.push((current_position, [], 0), self.heuristique(current_position, target_position))
+        marked_state = set()
+        marked_state.add(current_position)
+        while not stack.is_empty():
+            smallest_G_H = stack.pop()
+            current_position, actions, Greedy = smallest_G_H
+            if current_position == target_position:
+                return actions
+            for next_position, action in self.get_actions(current_position, target_position):
+                if next_position in marked_state:
+                    continue
+                stack.push((next_position, actions + [action], Greedy + 1), Greedy + 1 + self.heuristique(next_position, target_position))
+                marked_state.add(next_position)
+        return None
+    def heuristique(self, position, target_position):
+        x_distance = abs(target_position[0] - position[0])
+        y_distance = abs(target_position[1] - position[1])
+        distance = math.sqrt(math.pow(x_distance, 2) + math.pow(y_distance, 2))
+        return distance
+
+    def get_actions(self, position, target_position):
+        possible_actions = {UP: (position[0], position[1]+1), DOWN: (position[0], position[1]-1), LEFT: (position[0]-1, position[1]), RIGHT: (position[0]+1, position[1])}
+        real_possible_actions = []
+        for direction in possible_actions:
+            if self.world.Inboard(possible_actions[direction]):
+                if possible_actions[direction] == target_position:
+                    return [(possible_actions[direction], direction)]
+                if self.world.entities[possible_actions[direction]] == 0:
+                    real_possible_actions.append((possible_actions[direction], direction))
+        return real_possible_actions
+
+
+

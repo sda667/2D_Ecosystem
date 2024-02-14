@@ -15,9 +15,9 @@ class Entity(ABC):
         self.last_movement = (0, 0)
         self.depth = ("Surface Sea", "Sea", "Deep Sea")
 
-    #@abstractmethod
-    #def brain(self, entities_positiions):
-    #    pass
+    @abstractmethod
+    def brain(self, entities_positiions):
+        pass
 
     @property
     def entity_name(self) -> str:
@@ -135,6 +135,8 @@ class Shark(Entity):
         self.set_entity_depth(("Surface Sea", "Sea"))
         self.set_entity_life_span((20, 30))
         self.set_entity_zone(("Near Beach", "Mid Ocean", "Far Ocean"))
+    def brain(self, entities_position):
+        return "idle"
 
 
 class Orca(Entity):

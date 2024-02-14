@@ -56,4 +56,11 @@ class World():
     # ENLEVE UNE ENTITE D'UNE CASE
     def clear_entity(self, x, y):
         self.entities[(x, y)] = 0
-    
+    def Inboard(self, position):
+        if (position[0] < 0) or (position[1] < 0):
+            return False
+        else:
+            if ((position[0] < self.i_size) and (position[1] < self.j_size)):
+                return True
+            else:
+                return False

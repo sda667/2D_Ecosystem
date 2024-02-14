@@ -62,6 +62,7 @@ class GridDisplay:
 
     # AFFICHER LES ENTITES
     def __draw_entities(self) -> None:
+
         for i in range(self.world.entities.shape[0]):
             for j in range(self.world.entities.shape[1]):
                 # Récupération de l'image de la case
