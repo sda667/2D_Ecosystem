@@ -5,7 +5,7 @@ class Entity(ABC):
     def __init__(self) -> None:
         super().__init__()
         self.name = "NONE"
-        self.type = 0
+        self.type = 0   # Niveau dans la chaine alimentaire (plus grand = plus de nourriture) (à utiliser pour manger)
         self.age = 0
         self.life_span = (0, 1)
         self.sex = ("FEMALE", "MALE")
@@ -14,6 +14,11 @@ class Entity(ABC):
         self.hunger = 0
         self.last_movement = (0, 0)
         self.depth = ("Surface Sea", "Sea", "Deep Sea")
+        self.speed = 0
+        self.vision = 0
+        self.max_polution = 0
+        self.temp = (0,1)   #Perfect temp for creature
+
 
     @abstractmethod
     def brain(self, entities_positiions):
@@ -86,6 +91,11 @@ class Entity(ABC):
     def set_entity_depth(self, depth: tuple) -> None:
         self.depth = depth
 
+    def entity_vision(self):
+        return self.vision
+
+    def set_entity_vision(self, vision):
+        self.vision = vision
 
 class Plankton(Entity):
     def __init__(self) -> None:
