@@ -15,9 +15,16 @@ class controller():
     
     # DEPLACEMENT IDLE D'UNE ENTITE (STOCHASTIQUE, MARCHE ALEATOIRE A MEMOIRE)
     def move(self, entity, start, end):
+        self.world.entities[end] = entity
         self.world.clear_entity(*start)
-        self.world.set_entity(entity.entity_name, *end)
-    def __idle_update(self, x, y):
+        entity.set_entity_speed_cooldown(entity.entity_speed)
+    def entity_positions_list_update(self, entity_positions, old_position, new_position):
+        for i in range(len(entity_positions)):
+            if entity_positions[i] == old_position:
+                entity_positions[i] = new_position
+                return
+
+    def __idle_update(self, x, y, entity_positions):
         entity = self.world.entities[(x, y)]
         name = entity.entity_name
         movement = entity.get_last_movement()
@@ -34,6 +41,7 @@ class controller():
         # On déplace l'entité (si la case n'est pas une case d'air)
         if self.world.Inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0 and self.world.entities[new_x, new_y] == 0:
             self.move(entity, (x, y), (new_x, new_y))
+            self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
             entity.set_last_movement(dx, dy)
 
     # DEPLACEMENT D'UN PREDATEUR (CHASSE, SE DEPLACE VERS LA PROIE LA PLUS PROCHE, S'IL Y EN A UNE A PORTEE)
@@ -44,7 +52,7 @@ class controller():
         for entity_position in entity_positions:
             if entity_position != (x, y):
                 entity = self.world.entities[entity_position]
-                if entity.entity_type < myself.entity_type:
+                if entity.entity_name in myself.preys:
                     preys.append(entity_positions)
         # FIND THE CLOSEST PREDATOR FROM THE PREDATOR LIST
         closest_prey = None
@@ -62,7 +70,10 @@ class controller():
             new_x, new_y = x + dx, y + dy
             entity = self.world.entities[(x, y)]
             if self.world.Inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0:
+                if ((new_x, new_y) == closest_prey):
+                    entity.eat(self.world.entities[closest_prey])
                 self.move(entity, (x, y), (new_x, new_y))
+                self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
                 entity.set_last_movement(dx, dy)
 
     # DEPLACEMENT VERS LA CASE LA PLUS ELOIGNER DU PREDATEUR LE PLUS PROCHE
@@ -73,7 +84,7 @@ class controller():
         for entity_position in entity_positions:
             if entity_position != (x, y):
                 entity = self.world.entities[entity_position]
-                if entity.entity_type > myself.entity_type:
+                if myself.entity_name in entity.preys:
                     enemies.append(entity_position)
         # FIND THE CLOSEST PREDATOR FROM THE PREDATOR LIST
         closest_enemy = None
@@ -96,6 +107,7 @@ class controller():
             entity = self.world.entities[(x, y)]
             if self.world.Inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0:
                 self.move(entity, (x, y), (new_x, new_y))
+                self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
                 entity.set_last_movement(dx, dy)
 
 
@@ -104,24 +116,25 @@ class controller():
 
         entity = self.world.entities[(x, y)]
         # not implemented yet , the entity think about what to do
-        Action = entity.brain(entity_positions)
-        if Action == "idle":
+        Action = entity.brain((x, y), entity_positions, self.world.entities)
+        if Action == "Idle":
             #UPDATE QUAND RIEN NE SE PASSE (PAS DE PROIE, PAS DE PREDATEUR, ETC.)
-            self.__idle_update(x, y)
-        elif Action == "predation":
+            self.__idle_update(x, y, entity_positions)
+        elif Action == "Predation":
             self.__predator_update(x, y, entity_positions)
-        elif Action == "flee":
+        elif Action == "Flee":
             self.__flee_update(x, y, entity_positions)
-
+        elif Action == "Stay":
+            entity.set_entity_speed_cooldown(entity.entity_speed_cooldown-1)
     # UPDATE DES ENTITES
     def update_entities(self):
         # Set des positions des entités
-        entity_positions = set()  
+        entity_positions = []
         # Récupération des positions des entités
         for i in range(self.world.entities.shape[0]):
             for j in range(self.world.entities.shape[1]):
                 if self.world.entities[i, j] != 0:
-                    entity_positions.add((i, j))  # Add entity position to the set
+                    entity_positions.append((i, j))  # Add entity position to the set
         # Update des entités
         for position in entity_positions:
             self.__update_entity(*position, entity_positions)  # Update each entity position
