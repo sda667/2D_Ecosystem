@@ -1,57 +1,66 @@
+import random
 from abc import ABC, abstractmethod
 import random
 import math
+
+
 class Entity(ABC):
-    def __init__(self) -> None:
+    def __init__(self, age=0) -> None:
         super().__init__()
         self.name = "NONE"
-        self.type = 0   # Niveau dans la chaine alimentaire (plus grand = plus de nourriture) (à utiliser pour manger)
-        self.age = 0
+        self.type = 0  # Niveau dans la chaine alimentaire (plus grand = plus de nourriture) (à utiliser pour manger)
+        self.age = age
         self.life_span = (0, 1)
-        self.sex = random.choice(["FEMALE", "MALE"])
+        self.sex = random.randint(0, 1)  # 0 Female # 1 Male
         self.zone = ("Near Beach", "Mid Ocean", "Far Ocean")
         self.life_style = "individual"
         self.hunger = 0
         self.max_hunger = 0
         self.last_movement = (0, 0)
         self.depth = ("Surface Sea", "Sea", "Deep Sea")
-        self.speed = 0 # cooldown after each turn so speed =0 mean no cooldown the entity will move on each turn
+        self.speed = 0  # cooldown after each turn so speed =0 mean no cooldown the entity will move on each turn
         self.speed_cooldown = 0
         self.vision = 0
         self.max_pollution = 0
-        self.temp = (0,1)   #Perfect temp for creature
-        self.preys = []
+        self.temp = (0, 1)  # Perfect temp for creature
+        self.prey_set = set("Plankton")
 
     def brain(self, myposition: tuple, entities_position: list, entities_matrix) -> str:
         if self.entity_speed_cooldown == 0:
             if self.check_threat(myposition, entities_position, entities_matrix):
                 return "Flee"
             elif (self.entity_hunger <= self.entity_max_hunger // 2) and (
-            self.check_prey(myposition, entities_position, entities_matrix)):
+                    self.check_prey(myposition, entities_position, entities_matrix)):
                 return "Predation"
             else:
                 return "Idle"
         else:
             return "Stay"
+
     def eat(self, entity):
         value = entity.entity_type * 20 + 10
         hunger = self.entity_hunger
         self.set_entity_hunger(hunger - min(hunger, value))
+
     def heuristique(self, position, target_position):
         x_distance = abs(target_position[0] - position[0])
         y_distance = abs(target_position[1] - position[1])
         distance = math.sqrt(math.pow(x_distance, 2) + math.pow(y_distance, 2))
         return distance
+
     def check_threat(self, myposition, entities_position: list, entities_matrix):
         for entity_position in entities_position:
             entity = entities_matrix[entity_position]
-            if (self.entity_name in entity.preys) and self.heuristique(myposition, entity_position)<= self.entity_vision:
+            if (self.entity_name in entity.prey_set) and self.heuristique(myposition,
+                                                                       entity_position) <= self.entity_vision:
                 return True
         return False
+
     def check_prey(self, myposition, entities_position, entities_matrix):
         for entity_position in entities_position:
             entity = entities_matrix[entity_position]
-            if (entity.entity_name in self.preys) and self.heuristique(myposition, entity_position)<= self.entity_vision:
+            if (entity.entity_name in self.prey_set) and self.heuristique(myposition,
+                                                                       entity_position) <= self.entity_vision:
                 return True
         return False
 
@@ -89,12 +98,14 @@ class Entity(ABC):
 
     def set_entity_max_hunger(self, hunger: int) -> None:
         self.max_hunger = hunger
+
     @property
     def entity_sex(self) -> str:
         return self.sex
 
     def set_entity_sex(self, sex: str):
         self.sex = sex
+
     @property
     def entity_life_style(self) -> str:
         return self.life_style
@@ -139,14 +150,24 @@ class Entity(ABC):
     @property
     def entity_speed(self) -> int:
         return self.speed
+
     def set_entity_speed(self, speed: int) -> None:
         self.speed = speed
 
     @property
     def entity_speed_cooldown(self) -> int:
         return self.speed_cooldown
+
     def set_entity_speed_cooldown(self, cooldown: int) -> None:
         self.speed_cooldown = cooldown
+
+    def entity_preys(self):
+        return self.prey_set
+
+    def set_entity_preys(self, preys: list):
+        for i in range(len(preys)):
+            self.prey_set.add(preys[i])
+
 
 class Plankton(Entity):
     def __init__(self) -> None:
@@ -154,7 +175,7 @@ class Plankton(Entity):
         self.set_entity_name("Plankton")
         # lower the type, the lower the creature are in the food chain.
         self.set_entity_type(0)
-        self.set_entity_depth(("Surface Sea",))
+        self.set_entity_depth("Surface Sea")
         self.set_entity_zone(("Near Beach", "Mid Ocean"))
 
 
@@ -166,6 +187,7 @@ class Crab(Entity):
         self.set_entity_life_span((3, 5))
         self.set_entity_depth("Deep Sea")
         self.set_entity_zone("Near Beach")
+        self.set_entity_preys(["Fish"])
 
 
 class Medusa(Entity):
@@ -176,6 +198,7 @@ class Medusa(Entity):
         self.set_entity_life_span((1, 3))
         self.set_entity_depth(("Surface Sea", "Sea"))
         self.set_entity_zone(("Near Beach", "Mid Ocean"))
+        self.set_entity_preys(["Fish", "Plankton"])
 
 
 class Fish(Entity):
@@ -186,30 +209,18 @@ class Fish(Entity):
         self.set_entity_life_span((2, 5))
         self.set_entity_zone(("Near Beach", "Mid Ocean"))
         self.set_entity_depth(("Surface Sea", "Sea"))
+        self.set_entity_preys(["Plankton"])
 
 
 class Shark(Entity):
-    def __init__(self, age=0, hunger=0, ) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        # mutable attributs
-        self.set_entity_age(age)
-        self.set_entity_hunger(hunger)
-        # self.life_style = "individual"
-        # self.max_pollution
-        # self.temp = (0, 1)
-        # unmutable attributs
-        self.set_entity_vision(5)
-        self.set_entity_speed(5)
-        self.preys = ["Fish", "Crab"]
         self.set_entity_name("Shark")
         self.set_entity_type(3)
         self.set_entity_depth(("Surface Sea", "Sea"))
         self.set_entity_life_span((20, 30))
         self.set_entity_zone(("Near Beach", "Mid Ocean", "Far Ocean"))
-        self.set_entity_max_hunger(100)
-    # THINK ABOUT WAHT TO DO
-
-
+        self.set_entity_preys(["Fish", "Medusa"])
 
 
 class Orca(Entity):
@@ -222,4 +233,4 @@ class Orca(Entity):
         self.set_entity_life_style("Group")
         self.set_entity_life_span((50, 90))
         self.set_entity_zone(("Near Beach", "Mid Ocean", "Far Ocean"))
-
+        self.set_entity_preys(["Fish", "Medusa", "Shark"])

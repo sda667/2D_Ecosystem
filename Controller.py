@@ -38,6 +38,9 @@ class controller():
         weights = weight_dict.get(movement, [0.25]*4)
         dx, dy = random.choices(self.directions, weights=weights)[0]
         new_x, new_y = x + dx, y + dy
+        while not self.world.Inboard((new_x, new_y)):
+            dx, dy = random.choices(self.directions, weights=weights)[0]
+            new_x, new_y = x + dx, y + dy
         # On déplace l'entité (si la case n'est pas une case d'air)
         if self.world.Inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0 and self.world.entities[new_x, new_y] == 0:
             self.move(entity, (x, y), (new_x, new_y))

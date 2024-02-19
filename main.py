@@ -17,7 +17,9 @@ def main(cell_size=15, x_size = 60, y_size=120) -> None:
     grid_display = GridDisplay(monde, cell_size=cell_size, screen_size=screen_size)  # Taille d'une case en pixels
     grid_display.run()
     # Initialisation du contrôleur
+
     controleur = controller(monde)
+
     # Boucle d'action du monde (plus besoin de toucher à l'affichage)
     while True:
         time.sleep(0.2)

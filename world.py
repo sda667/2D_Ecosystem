@@ -11,6 +11,14 @@ class World():
         self.grid = np.zeros_like(grid_x, dtype=Case)  #Manipuler grid avec grid[(x, y)]
         self.i_size, self.j_size = x_size, y_size
         self.entities = np.zeros_like(grid_x, dtype=Entity)
+        self.shark_existence = (5, 15)
+        self.fish_existence = (100, 150)
+        self.plankton_existence = (250, 300)
+        self.medusa_existence = (40, 60)
+        self.orcas_existence = (5, 10)
+        self.crab_existence = (20, 30)
+
+
 
     # GETTER DE LA GRILLE
     @property
@@ -56,6 +64,7 @@ class World():
     # ENLEVE UNE ENTITE D'UNE CASE
     def clear_entity(self, x, y):
         self.entities[(x, y)] = 0
+
     def Inboard(self, position):
         if (position[0] < 0) or (position[1] < 0):
             return False

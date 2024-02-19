@@ -1,3 +1,2 @@
 Shark 15 15
-Shark 30 30
-Shark 10 12
+Shark 16 16
