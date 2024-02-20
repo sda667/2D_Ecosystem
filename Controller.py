@@ -128,8 +128,19 @@ class controller():
         elif Action == "Flee":
             self.__flee_update(x, y, entity_positions)
         elif Action == "Stay":
-            entity.set_entity_speed_cooldown(entity.entity_speed_cooldown-1)
+            if entity.entity_speed != -1:
+                entity.set_entity_speed_cooldown(entity.entity_speed_cooldown-1)
+    # UPDATE THE ATTRIBUTS OF A ENTITY AT (X, Y)
+    def __status_update(self, x, y):
+        entity = self.world.entities[(x, y)]
+        entity.set_entity_hunger(entity.entity_hunger+1)
+        entity.set_entity_age(entity.entity_age-1)
+        if entity.entity_hunger >= 100 or entity.entity_age >= entity.entity_life_span:
+            self.world.clear_entity(x, y)
+
+
     # UPDATE DES ENTITES
+
     def update_entities(self):
         # Set des positions des entités
         entity_positions = []
@@ -141,6 +152,8 @@ class controller():
         # Update des entités
         for position in entity_positions:
             self.__update_entity(*position, entity_positions)  # Update each entity position
+        for position in entity_positions:
+            self.__status_update(*position)
 
     # GET SHORTEST PATH BETWEEN A POINT AND ANOTHER POINT USING ASTAR
     def astar(self, current_position, target_position):

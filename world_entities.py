@@ -25,7 +25,7 @@ class Entity(ABC):
         self.prey_set = set("Plankton")
 
     def brain(self, myposition: tuple, entities_position: list, entities_matrix) -> str:
-        if self.entity_speed_cooldown == 0:
+        if self.entity_speed_cooldown == 0 and self.entity_speed != -1:
             if self.check_threat(myposition, entities_position, entities_matrix):
                 return "Flee"
             elif (self.entity_hunger >= 50) and (
@@ -162,18 +162,31 @@ class Entity(ABC):
 
 
 class Plankton(Entity):
-    def __init__(self) -> None:
+    def __init__(self, age=0, hunger=0) -> None:
         super().__init__()
+        self.set_entity_age(age)
+        self.set_entity_hunger(hunger)
+
+        self.set_entity_life_span(100)
+        self.set_entity_speed(-1)
+        self.set_entity_vision(0)
+
         self.set_entity_name("Plankton")
-        # lower the type, the lower the creature are in the food chain.
         self.set_entity_type(0)
         self.set_entity_depth("Surface Sea")
         self.set_entity_zone(("Near Beach", "Mid Ocean"))
 
 
 class Crab(Entity):
-    def __init__(self) -> None:
+    def __init__(self, age=0, hunger=0) -> None:
         super().__init__()
+        self.set_entity_age(age)
+        self.set_entity_hunger(hunger)
+
+        self.set_entity_life_span(100) # not configured yet
+        self.set_entity_speed(-1) # not configured yet
+        self.set_entity_vision(0) # not configured yet
+
         self.set_entity_name("Crab")
         self.set_entity_type(1)
         self.set_entity_life_span((3, 5))
@@ -183,8 +196,15 @@ class Crab(Entity):
 
 
 class Medusa(Entity):
-    def __init__(self) -> None:
+    def __init__(self, age=0, hunger=0) -> None:
         super().__init__()
+        self.set_entity_age(age)
+        self.set_entity_hunger(hunger)
+
+        self.set_entity_life_span(100)  # not configured yet
+        self.set_entity_speed(-1)  # not configured yet
+        self.set_entity_vision(0)  # not configured yet
+
         self.set_entity_name("Medusa")
         self.set_entity_type(1)
         self.set_entity_life_span((1, 3))
@@ -194,8 +214,15 @@ class Medusa(Entity):
 
 
 class Fish(Entity):
-    def __init__(self) -> None:
+    def __init__(self, age=0, hunger=0) -> None:
         super().__init__()
+        self.set_entity_age(age)
+        self.set_entity_hunger(hunger)
+
+        self.set_entity_life_span(100)  # not configured yet
+        self.set_entity_speed(-1)  # not configured yet
+        self.set_entity_vision(0)  # not configured yet
+
         self.set_entity_name("Fish")
         self.set_entity_type(1)
         self.set_entity_life_span((2, 5))
@@ -205,8 +232,15 @@ class Fish(Entity):
 
 
 class Shark(Entity):
-    def __init__(self) -> None:
+    def __init__(self, age=0, hunger=0) -> None:
         super().__init__()
+        self.set_entity_age(age)
+        self.set_entity_hunger(hunger)
+
+        self.set_entity_life_span(20)
+        self.set_entity_speed(0)
+        self.set_entity_vision(5)
+
         self.set_entity_name("Shark")
         self.set_entity_type(3)
         self.set_entity_depth(("Surface Sea", "Sea"))
@@ -216,10 +250,16 @@ class Shark(Entity):
 
 
 class Orca(Entity):
-    def __init__(self) -> None:
+    def __init__(self, age=0, hunger=0) -> None:
         super().__init__()
+        self.set_entity_age(age)
+        self.set_entity_hunger(hunger)
+
+        self.set_entity_life_span(100)  # not configured yet
+        self.set_entity_speed(-1)  # not configured yet
+        self.set_entity_vision(0)  # not configured yet
+
         self.set_entity_name("Orca")
-        # super predator , it can eat all creature
         self.set_entity_type(4)
         self.set_entity_depth(("Surface Sea", "Sea"))
         self.set_entity_life_style("Group")
