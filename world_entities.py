@@ -15,7 +15,6 @@ class Entity(ABC):
         self.zone = ("Near Beach", "Mid Ocean", "Far Ocean")
         self.life_style = "individual"
         self.hunger = 0
-        self.max_hunger = 0
         self.last_movement = (0, 0)
         self.depth = ("Surface Sea", "Sea", "Deep Sea")
         self.speed = 0  # cooldown after each turn so speed =0 mean no cooldown the entity will move on each turn
@@ -29,7 +28,7 @@ class Entity(ABC):
         if self.entity_speed_cooldown == 0:
             if self.check_threat(myposition, entities_position, entities_matrix):
                 return "Flee"
-            elif (self.entity_hunger <= self.entity_max_hunger // 2) and (
+            elif (self.entity_hunger >= 50) and (
                     self.check_prey(myposition, entities_position, entities_matrix)):
                 return "Predation"
             else:
@@ -91,13 +90,6 @@ class Entity(ABC):
 
     def set_entity_hunger(self, hunger: int) -> None:
         self.hunger = hunger
-
-    @property
-    def entity_max_hunger(self) -> int:
-        return self.max_hunger
-
-    def set_entity_max_hunger(self, hunger: int) -> None:
-        self.max_hunger = hunger
 
     @property
     def entity_sex(self) -> str:
