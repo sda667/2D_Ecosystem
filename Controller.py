@@ -38,11 +38,11 @@ class controller():
         weights = weight_dict.get(movement, [0.25]*4)
         dx, dy = random.choices(self.directions, weights=weights)[0]
         new_x, new_y = x + dx, y + dy
-        while not self.world.Inboard((new_x, new_y)):
+        while not self.world.inboard((new_x, new_y)):
             dx, dy = random.choices(self.directions, weights=weights)[0]
             new_x, new_y = x + dx, y + dy
         # On déplace l'entité (si la case n'est pas une case d'air)
-        if self.world.Inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0 and self.world.entities[new_x, new_y] == 0:
+        if self.world.inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0 and self.world.entities[new_x, new_y] == 0:
             self.move(entity, (x, y), (new_x, new_y))
             self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
             entity.set_last_movement(dx, dy)
@@ -55,13 +55,13 @@ class controller():
         for entity_position in entity_positions:
             if entity_position != (x, y):
                 entity = self.world.entities[entity_position]
-                if entity.entity_name in myself.preys:
-                    preys.append(entity_positions)
+                if entity.entity_name in myself.prey_set:
+                    preys.append(entity_position)
         # FIND THE CLOSEST PREDATOR FROM THE PREDATOR LIST
         closest_prey = None
         distance = math.inf
         for prey in preys:
-            if distance < self.heuristique((x, y), prey):
+            if self.heuristique((x, y), prey) < distance:
                 distance = self.heuristique((x, y), prey)
                 closest_prey = prey
         # PATH TO THE PREY
@@ -72,7 +72,7 @@ class controller():
             dx, dy = self.directions[action]
             new_x, new_y = x + dx, y + dy
             entity = self.world.entities[(x, y)]
-            if self.world.Inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0:
+            if self.world.inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0:
                 if ((new_x, new_y) == closest_prey):
                     entity.eat(self.world.entities[closest_prey])
                 self.move(entity, (x, y), (new_x, new_y))
@@ -87,13 +87,13 @@ class controller():
         for entity_position in entity_positions:
             if entity_position != (x, y):
                 entity = self.world.entities[entity_position]
-                if myself.entity_name in entity.preys:
+                if myself.entity_name in entity.prey_set:
                     enemies.append(entity_position)
         # FIND THE CLOSEST PREDATOR FROM THE PREDATOR LIST
         closest_enemy = None
         distance = math.inf
         for enemy in enemies:
-            if distance < self.heuristique((x, y), enemy):
+            if self.heuristique((x, y), enemy) < distance:
                 distance = self.heuristique((x, y), enemy)
                 closest_enemy = enemy
         # TARGET TO GO TO FLEE FROM THE PREDATOR
@@ -108,7 +108,7 @@ class controller():
             dx, dy = self.directions[action]
             new_x, new_y = x + dx, y + dy
             entity = self.world.entities[(x, y)]
-            if self.world.Inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0:
+            if self.world.inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0:
                 self.move(entity, (x, y), (new_x, new_y))
                 self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
                 entity.set_last_movement(dx, dy)
@@ -124,19 +124,31 @@ class controller():
             #UPDATE QUAND RIEN NE SE PASSE (PAS DE PROIE, PAS DE PREDATEUR, ETC.)
             self.__idle_update(x, y, entity_positions)
         elif Action == "Predation":
+            print(entity.entity_name+ " is hungry")
             self.__predator_update(x, y, entity_positions)
         elif Action == "Flee":
+            print(entity.entity_name + " is fleeing")
             self.__flee_update(x, y, entity_positions)
         elif Action == "Stay":
             if entity.entity_speed != -1:
                 entity.set_entity_speed_cooldown(entity.entity_speed_cooldown-1)
     # UPDATE THE ATTRIBUTS OF A ENTITY AT (X, Y)
-    def __status_update(self, x, y):
+    def __status_update(self, x, y, entity_positions):
         entity = self.world.entities[(x, y)]
         entity.set_entity_hunger(entity.entity_hunger+1)
-        entity.set_entity_age(entity.entity_age-1)
-        if entity.entity_hunger >= 100 or entity.entity_age >= entity.entity_life_span:
+        entity.set_entity_age(entity.entity_age+1)
+        if entity.entity_hunger >= 100 or entity.entity_age >= entity.entity_life_span[1]:
+            print("died due to hunger or overage")
             self.world.clear_entity(x, y)
+            entity_positions.remove((x, y))
+
+        else:
+            if entity.entity_age >= entity.entity_life_span[0]:
+                if random.randint(0, 1) == 1:
+                    print("died due to old age")
+                    self.world.clear_entity(x, y)
+                    entity_positions.remove((x, y))
+
 
 
     # UPDATE DES ENTITES
@@ -151,9 +163,10 @@ class controller():
                     entity_positions.append((i, j))  # Add entity position to the set
         # Update des entités
         for position in entity_positions:
-            self.__update_entity(*position, entity_positions)  # Update each entity position
+            self.__status_update(*position, entity_positions)
         for position in entity_positions:
-            self.__status_update(*position)
+            self.__update_entity(*position, entity_positions)  # Update each entity position
+
 
     # GET SHORTEST PATH BETWEEN A POINT AND ANOTHER POINT USING ASTAR
     def astar(self, current_position, target_position):
@@ -182,7 +195,7 @@ class controller():
         possible_actions = {UP: (position[0], position[1]+1), DOWN: (position[0], position[1]-1), LEFT: (position[0]-1, position[1]), RIGHT: (position[0]+1, position[1])}
         real_possible_actions = []
         for direction in possible_actions:
-            if self.world.Inboard(possible_actions[direction]):
+            if self.world.inboard(possible_actions[direction]):
                 if possible_actions[direction] == target_position:
                     return [(possible_actions[direction], direction)]
                 if self.world.entities[possible_actions[direction]] == 0:

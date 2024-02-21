@@ -5,12 +5,12 @@ import math
 
 
 class Entity(ABC):
-    def __init__(self, age=0) -> None:
+    def __init__(self) -> None:
         super().__init__()
         self.name = "NONE"
         self.type = 0  # Niveau dans la chaine alimentaire (plus grand = plus de nourriture) (à utiliser pour manger)
-        self.age = age
-        self.life_span = (0, 1)
+        self.age = 0
+        self.life_span = (0, 0)
         self.sex = random.randint(0, 1)  # 0 Female # 1 Male
         self.zone = ("Near Beach", "Mid Ocean", "Far Ocean")
         self.life_style = "individual"
@@ -40,6 +40,7 @@ class Entity(ABC):
         value = entity.entity_type * 20 + 10
         hunger = self.entity_hunger
         self.set_entity_hunger(hunger - min(hunger, value))
+        print(self.entity_name + " is not hungry anymore")
 
     def heuristique(self, position, target_position):
         x_distance = abs(target_position[0] - position[0])
@@ -106,7 +107,7 @@ class Entity(ABC):
         self.life_style = life_style
 
     @property
-    def entity_life_span(self) -> str:
+    def entity_life_span(self) -> tuple:
         return self.life_span
 
     def set_entity_life_span(self, max_age: tuple):
@@ -183,13 +184,12 @@ class Crab(Entity):
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
-        self.set_entity_life_span(100) # not configured yet
+        self.set_entity_life_span((3, 5)) # not configured yet
         self.set_entity_speed(-1) # not configured yet
         self.set_entity_vision(0) # not configured yet
 
         self.set_entity_name("Crab")
         self.set_entity_type(1)
-        self.set_entity_life_span((3, 5))
         self.set_entity_depth("Deep Sea")
         self.set_entity_zone("Near Beach")
         self.set_entity_preys(["Fish"])
@@ -201,13 +201,12 @@ class Medusa(Entity):
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
-        self.set_entity_life_span(100)  # not configured yet
+        self.set_entity_life_span((1, 3))  # not configured yet
         self.set_entity_speed(-1)  # not configured yet
         self.set_entity_vision(0)  # not configured yet
 
         self.set_entity_name("Medusa")
         self.set_entity_type(1)
-        self.set_entity_life_span((1, 3))
         self.set_entity_depth(("Surface Sea", "Sea"))
         self.set_entity_zone(("Near Beach", "Mid Ocean"))
         self.set_entity_preys(["Fish", "Plankton"])
@@ -219,13 +218,12 @@ class Fish(Entity):
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
-        self.set_entity_life_span(100)  # not configured yet
-        self.set_entity_speed(-1)  # not configured yet
-        self.set_entity_vision(0)  # not configured yet
+        self.set_entity_life_span((100, 200))  # not configured yet
+        self.set_entity_speed(1)  # not configured yet
+        self.set_entity_vision(5)  # not configured yet
 
         self.set_entity_name("Fish")
         self.set_entity_type(1)
-        self.set_entity_life_span((2, 5))
         self.set_entity_zone(("Near Beach", "Mid Ocean"))
         self.set_entity_depth(("Surface Sea", "Sea"))
         self.set_entity_preys(["Plankton"])
@@ -237,14 +235,13 @@ class Shark(Entity):
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
-        self.set_entity_life_span(20)
+        self.set_entity_life_span((300, 500))
         self.set_entity_speed(0)
-        self.set_entity_vision(5)
+        self.set_entity_vision(20)
 
         self.set_entity_name("Shark")
         self.set_entity_type(3)
         self.set_entity_depth(("Surface Sea", "Sea"))
-        self.set_entity_life_span((20, 30))
         self.set_entity_zone(("Near Beach", "Mid Ocean", "Far Ocean"))
         self.set_entity_preys(["Fish", "Medusa"])
 
@@ -255,7 +252,7 @@ class Orca(Entity):
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
-        self.set_entity_life_span(100)  # not configured yet
+        self.set_entity_life_span((50, 90))  # not configured yet
         self.set_entity_speed(-1)  # not configured yet
         self.set_entity_vision(0)  # not configured yet
 
@@ -263,6 +260,5 @@ class Orca(Entity):
         self.set_entity_type(4)
         self.set_entity_depth(("Surface Sea", "Sea"))
         self.set_entity_life_style("Group")
-        self.set_entity_life_span((50, 90))
         self.set_entity_zone(("Near Beach", "Mid Ocean", "Far Ocean"))
         self.set_entity_preys(["Fish", "Medusa", "Shark"])
