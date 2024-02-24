@@ -7,11 +7,6 @@ T = TypeVar("T")
 
 class PriorityQueue(Generic[T]):
     """
-    Implements a priority queue data structure. Each inserted item
-    has a priority associated with it and the client is usually interested
-    in quick retrieval of the lowest-priority item in the queue. This
-    data structure allows O(1) access to the lowest-priority item.
-
     Credits: Berkley AI Pacman Project
     """
 
@@ -28,16 +23,10 @@ class PriorityQueue(Generic[T]):
         (_, _, item) = heapq.heappop(self.heap)
         return item
 
-    def isEmpty(self):
-        return len(self.heap) == 0
-
     def is_empty(self):
         return len(self.heap) == 0
 
     def update(self, item: T, priority: float):
-        # If item already in priority queue with higher priority, update its priority and rebuild the heap.
-        # If item already in priority queue with equal or lower priority, do nothing.
-        # If item not in priority queue, do the same thing as self.push.
         for index, (p, c, i) in enumerate(self.heap):
             if i == item:
                 if p <= priority:
