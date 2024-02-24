@@ -1,6 +1,7 @@
 import numpy as np
 from world_cases import *
 from world_entities import *
+import random
 
 
 class World:
@@ -54,6 +55,25 @@ class World:
                 for i, case_type in enumerate(line):
                     self.set_case(i, j, case_type)
         self.create_entities(foreground)
+    
+    # CREE UN MONDE AVEC UN NOMBRE DE COUCHES ALEATOIRES DANS CERTAINES PROPORTIONS DONNEES
+    def generate_world(self, foreground):
+        sky_proportion = random.randint(9,13)
+        surfacesea_proportion = random.randint (58, 66)
+        sea_proportion = random.randint(9,13)
+        sky_layers = round(sky_proportion/100*self.i_size)
+        surfacesea_layers = round(surfacesea_proportion/100*self.i_size)
+        sea_layers = round(sea_proportion/100*self.i_size)
+        deepsea_layers = self.i_size - sky_layers - surfacesea_layers - sea_layers
+
+        line_values = ['.']*sky_layers + ['S']*surfacesea_layers + ['M']*sea_layers + ['D']*deepsea_layers
+        world_matrix = [[value] * self.j_size for value in line_values]
+
+        for i in range(self.i_size):
+            for j in range(self.j_size):
+                self.set_case(j, i, world_matrix[i][j])
+        self.create_entities(foreground)
+
 
     # POSE UNE ENTITE SUR UNE CASE
     def set_entity(self, name, x, y):
