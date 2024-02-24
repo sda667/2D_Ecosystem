@@ -4,6 +4,8 @@ import json
 from world import *
 import time
 import threading
+import sys
+
 
 class GridDisplay:
     """
@@ -78,19 +80,36 @@ class GridDisplay:
                     cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
                     self.screen.blit(resized_image, cell_rect)
         pg.display.flip()
-        
+
+    def __draw_ui(self) -> None:
+        self.screen.fill((255, 255, 255))
+        font = pg.font.Font(None, 24)
+        button_surface = pg.Surface((100, 50))
+        text = font.render("Bouton", True, (0, 0, 0))
+        text_rect = text.get_rect(center=(button_surface.get_width()/2, button_surface.get_height()/2))
+        button_rect = pg.Rect(125, 125, 150, 50)
+        pg.display.flip()
     # AFFICHER LA GRILLE EN BOUCLE
     def __start_display(self) -> None:
+        mainloop = True
         running = True
         while running:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
-                elif event.type == pg.MOUSEBUTTONDOWN:
-                    pass
-            self.__draw_grid()
-            self.__draw_entities()
-            self.clock.tick(10) # 10 FPS
+                elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                    running = False
+                    break
+                elif event.type == pg.KEYDOWN and event.key == pg.K_DOWN:
+                    # Add your code here for handling the down arrow key press event
+                    self.__draw_ui()
+                    mainloop = False
+                elif event.type == pg.KEYDOWN and event.key == pg.K_UP:
+                    mainloop = True
+            if mainloop:
+                self.__draw_grid()
+                self.__draw_entities()
+                self.clock.tick(10) # 10 FPS
         pg.quit()
 
     # LANCER L'AFFICHAGE DANS UN THREAD (METHODE A APPELER DANS LE MAIN)
