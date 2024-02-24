@@ -71,22 +71,34 @@ class GridDisplay:
             for j in range(self.world.entities.shape[1]):
                 # Récupération de l'image de la case
                 if self.world.entities[i, j]:
-                    print(self.world.entities[i, j].entity_name)
-                    entity_type = self.world.entities[i, j].entity_name
+                    entity = self.world.entities[i, j]
+                    entity_type = entity.entity_name
                     entity_image = self.entities.get(entity_type)
                     flipped = pg.transform.flip(entity_image, True, False)
                     # Check if the entity moved to the right
-                    if self.world.entities[i, j] and self.world.entities[i, j].last_movement == (1, 0):
-                        image=flipped
+                    if entity.last_movement == (1, 0):
+                        image = flipped
                     else:
-                        image=entity_image
+                        image = entity_image
                     # Redimensionnement de l'image
                     resized_image = pg.transform.scale(image, (self.cell_size * 3, self.cell_size * 3))
-                    # Mask to remove white color
+                    # MOn enlève le blanc autour de l'image
                     resized_image.set_colorkey((255, 255, 255))
                     # Affichage de l'image
                     cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
                     self.screen.blit(resized_image, cell_rect)
+
+                    # Affichage de la barre de faim
+                    hunger_bar_width = self.cell_size * 3
+                    hunger_bar_height = 5
+                    hunger_level = entity.hunger
+                    max_hunger = 100
+                    hunger_bar_rect = pg.Rect(i * self.cell_size, j * self.cell_size - hunger_bar_height, hunger_bar_width, hunger_bar_height)
+                    pg.draw.rect(self.screen, (0, 255, 0), hunger_bar_rect)  # Fond de la barre de faim
+                    hunger_fill_rect = pg.Rect(i * self.cell_size, j * self.cell_size - hunger_bar_height, hunger_bar_width * hunger_level / max_hunger, hunger_bar_height)
+                    pg.draw.rect(self.screen, (255, 0, 0), hunger_fill_rect)  # Remplissage de la barre de faim
+
+                
         pg.display.flip()
 
     def __draw_ui(self) -> None:
