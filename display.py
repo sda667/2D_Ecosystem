@@ -22,6 +22,7 @@ class GridDisplay:
         self.config = self.__load_config("config.json")
         self.tiles = self.__load_tiles()
         self.entities = self.__load_entities()
+        self.prev_entities = np.copy(self.world.entities)  # Copy the entities grid to compare with the next state
     
     # CHARGER LA CONFIGURATION (FICHIER JSON)
     def __load_config(self, config_file: str) -> None:
@@ -66,15 +67,21 @@ class GridDisplay:
 
     # AFFICHER LES ENTITES
     def __draw_entities(self) -> None:
-
         for i in range(self.world.entities.shape[0]):
             for j in range(self.world.entities.shape[1]):
                 # Récupération de l'image de la case
-                if (self.world.entities[i, j]):
+                if self.world.entities[i, j]:
+                    print(self.world.entities[i, j].entity_name)
                     entity_type = self.world.entities[i, j].entity_name
                     entity_image = self.entities.get(entity_type)
+                    flipped = pg.transform.flip(entity_image, True, False)
+                    # Check if the entity moved to the right
+                    if self.world.entities[i, j] and self.world.entities[i, j].last_movement == (1, 0):
+                        image=flipped
+                    else:
+                        image=entity_image
                     # Redimensionnement de l'image
-                    resized_image = pg.transform.scale(entity_image, (self.cell_size * 3, self.cell_size * 3))
+                    resized_image = pg.transform.scale(image, (self.cell_size * 3, self.cell_size * 3))
                     # Mask to remove white color
                     resized_image.set_colorkey((255, 255, 255))
                     # Affichage de l'image
