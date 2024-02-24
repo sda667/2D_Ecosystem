@@ -8,16 +8,18 @@ LEFT = 1
 UP = 2
 DOWN = 3
 
+
 class controller():
-    def __init__(self,world):
+    def __init__(self, world):
         self.world = world
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-    
+
     # DEPLACEMENT IDLE D'UNE ENTITE (STOCHASTIQUE, MARCHE ALEATOIRE A MEMOIRE)
     def move(self, entity, start, end):
         self.world.entities[end] = entity
         self.world.clear_entity(*start)
         entity.set_entity_speed_cooldown(entity.entity_speed)
+
     def entity_positions_list_update(self, entity_positions, old_position, new_position):
         for i in range(len(entity_positions)):
             if entity_positions[i] == old_position:
@@ -34,15 +36,16 @@ class controller():
             (1, 0): [0.7, 0.1, 0.1, 0.1],
             (0, -1): [0.1, 0.1, 0.1, 0.7]
         }
-        #Si le dernier mouvement est inconnu, on prend une direction aléatoire, sinon on prend une direction aléatoire en privilégiant le dernier mouvement
-        weights = weight_dict.get(movement, [0.25]*4)
+        # Si le dernier mouvement est inconnu, on prend une direction aléatoire, sinon on prend une direction aléatoire en privilégiant le dernier mouvement
+        weights = weight_dict.get(movement, [0.25] * 4)
         dx, dy = random.choices(self.directions, weights=weights)[0]
         new_x, new_y = x + dx, y + dy
         while not self.world.inboard((new_x, new_y)):
             dx, dy = random.choices(self.directions, weights=weights)[0]
             new_x, new_y = x + dx, y + dy
         # On déplace l'entité (si la case n'est pas une case d'air)
-        if self.world.inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0 and self.world.entities[new_x, new_y] == 0:
+        if self.world.inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0 and self.world.entities[
+            new_x, new_y] == 0:
             self.move(entity, (x, y), (new_x, new_y))
             self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
             entity.set_last_movement(dx, dy)
@@ -99,7 +102,7 @@ class controller():
         # TARGET TO GO TO FLEE FROM THE PREDATOR
         dx = closest_enemy[0] - x
         dy = closest_enemy[1] - y
-        target_position = (x-dx, y-dy)
+        target_position = (x - dx, y - dy)
         # GETTING PATH TO IT
         actions = self.astar((x, y), target_position)
         if len(actions) != 0:
@@ -113,7 +116,6 @@ class controller():
                 self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
                 entity.set_last_movement(dx, dy)
 
-
     # UPDATE D'UNE ENTITE
     def __update_entity(self, x, y, entity_positions):
 
@@ -121,23 +123,25 @@ class controller():
         # not implemented yet , the entity think about what to do
         Action = entity.brain((x, y), entity_positions, self.world.entities)
         if Action == "Idle":
-            #UPDATE QUAND RIEN NE SE PASSE (PAS DE PROIE, PAS DE PREDATEUR, ETC.)
+            # UPDATE QUAND RIEN NE SE PASSE (PAS DE PROIE, PAS DE PREDATEUR, ETC.)
             self.__idle_update(x, y, entity_positions)
         elif Action == "Predation":
-            print(entity.entity_name+ " is hungry")
+            print(entity.entity_name + " is hungry")
             self.__predator_update(x, y, entity_positions)
         elif Action == "Flee":
             print(entity.entity_name + " is fleeing")
             self.__flee_update(x, y, entity_positions)
         elif Action == "Stay":
             if entity.entity_speed != -1:
-                entity.set_entity_speed_cooldown(entity.entity_speed_cooldown-1)
+                entity.set_entity_speed_cooldown(entity.entity_speed_cooldown - 1)
+
     # UPDATE THE ATTRIBUTS OF A ENTITY AT (X, Y)
     def __status_update(self, x, y, entity_positions):
         entity = self.world.entities[(x, y)]
-        entity.set_entity_hunger(entity.entity_hunger+1)
-        entity.set_entity_age(entity.entity_age+1)
-        if entity.entity_hunger >= 100 or entity.entity_age >= entity.entity_life_span[1]:
+        entity.set_entity_hunger(entity.entity_hunger + 1)
+        entity.set_entity_age(entity.entity_age + 1)
+        if entity.entity_hunger >= 100 or entity.entity_age >= entity.entity_life_span[
+            1]:  # TODO: Create function for death (percentage to go beyond the life span or before it)
             print("died due to hunger or overage")
             self.world.clear_entity(x, y)
             entity_positions.remove((x, y))
@@ -148,8 +152,6 @@ class controller():
                     print("died due to old age")
                     self.world.clear_entity(x, y)
                     entity_positions.remove((x, y))
-
-
 
     # UPDATE DES ENTITES
 
@@ -167,7 +169,6 @@ class controller():
         for position in entity_positions:
             self.__update_entity(*position, entity_positions)  # Update each entity position
 
-
     # GET SHORTEST PATH BETWEEN A POINT AND ANOTHER POINT USING ASTAR
     def astar(self, current_position, target_position):
         stack = PriorityQueue()
@@ -182,9 +183,11 @@ class controller():
             for next_position, action in self.get_actions(current_position, target_position):
                 if next_position in marked_state:
                     continue
-                stack.push((next_position, actions + [action], Greedy + 1), Greedy + 1 + self.heuristique(next_position, target_position))
+                stack.push((next_position, actions + [action], Greedy + 1),
+                           Greedy + 1 + self.heuristique(next_position, target_position))
                 marked_state.add(next_position)
         return None
+
     def heuristique(self, position, target_position):
         x_distance = abs(target_position[0] - position[0])
         y_distance = abs(target_position[1] - position[1])
@@ -192,7 +195,8 @@ class controller():
         return distance
 
     def get_actions(self, position, target_position):
-        possible_actions = {UP: (position[0], position[1]+1), DOWN: (position[0], position[1]-1), LEFT: (position[0]-1, position[1]), RIGHT: (position[0]+1, position[1])}
+        possible_actions = {UP: (position[0], position[1] + 1), DOWN: (position[0], position[1] - 1),
+                            LEFT: (position[0] - 1, position[1]), RIGHT: (position[0] + 1, position[1])}
         real_possible_actions = []
         for direction in possible_actions:
             if self.world.inboard(possible_actions[direction]):
@@ -201,6 +205,3 @@ class controller():
                 if self.world.entities[possible_actions[direction]] == 0:
                     real_possible_actions.append((possible_actions[direction], direction))
         return real_possible_actions
-
-
-

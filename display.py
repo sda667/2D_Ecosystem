@@ -35,12 +35,13 @@ class GridDisplay:
     def __load_entities(self) -> None:
         entities = {}
         for entity_type, path in self.config["EntityPath"].items():
-            entities[entity_type] = pg.image.load(path).convert()
+            entities[entity_type] = pg.image.load(path).convert_alpha()
         return entities
     
     # AFFICHER LA GRILLE
     def __draw_grid(self) -> None:
         # Couleur de fond
+
         background_image = pg.image.load("image/Ocean.png").convert()
         resized_image = pg.transform.scale(background_image, (self.screen_size[0] // 5, self.screen_size[1] // 5))  # Resize the image
         # Répéter l'image en boucle sur le haut de l'écran
