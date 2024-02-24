@@ -17,6 +17,7 @@ class World:
         self.medusa_existence = (40, 60)
         self.orcas_existence = (5, 10)
         self.crab_existence = (20, 30)
+        self.temperature = 20
 
     # GETTER DE LA GRILLE
     @property

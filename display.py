@@ -88,6 +88,14 @@ class GridDisplay:
         text = font.render("Bouton", True, (0, 0, 0))
         text_rect = text.get_rect(center=(button_surface.get_width()/2, button_surface.get_height()/2))
         button_rect = pg.Rect(125, 125, 150, 50)
+        button_surface.blit(text, text_rect)  # Ajoutez cette ligne pour afficher le texte sur la surface du bouton
+        self.screen.blit(button_surface, button_rect)  # Ajoutez cette ligne pour afficher la surface du bouton sur l'écran
+        
+        # Affichage de la température du monde
+        temperature_text = font.render(f"Temperature: {self.world.temperature}", True, (0, 0, 0))
+        temperature_rect = temperature_text.get_rect(center=(self.screen.get_width()/2, self.screen.get_height()/2))
+        self.screen.blit(temperature_text, temperature_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
+        
         pg.display.flip()
     # AFFICHER LA GRILLE EN BOUCLE
     def __start_display(self) -> None:
@@ -101,14 +109,17 @@ class GridDisplay:
                     running = False
                     break
                 elif event.type == pg.KEYDOWN and event.key == pg.K_DOWN:
-                    # Add your code here for handling the down arrow key press event
-                    self.__draw_ui()
                     mainloop = False
                 elif event.type == pg.KEYDOWN and event.key == pg.K_UP:
                     mainloop = True
+                elif event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+                    self.world.temperature += 1 
             if mainloop:
                 self.__draw_grid()
                 self.__draw_entities()
+                self.clock.tick(10) # 10 FPS
+            else:
+                self.__draw_ui()
                 self.clock.tick(10) # 10 FPS
         pg.quit()
 
