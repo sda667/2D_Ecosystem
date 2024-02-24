@@ -78,6 +78,7 @@ class controller():
             if self.world.inboard((new_x, new_y)) and self.world.grid[new_x, new_y] != 0:
                 if ((new_x, new_y) == closest_prey):
                     entity.eat(self.world.entities[closest_prey])
+                    entity_positions.remove((x, y))
                 self.move(entity, (x, y), (new_x, new_y))
                 self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
                 entity.set_last_movement(dx, dy)
