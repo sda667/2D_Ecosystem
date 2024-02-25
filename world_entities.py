@@ -1,5 +1,5 @@
 import random
-from abc import ABC
+from abc import ABC, abstractmethod
 import random
 import math
 
@@ -23,6 +23,8 @@ class Entity(ABC):
         self.depth = ("Surface Sea", "Sea", "Deep Sea")
         self.speed = 0  # cooldown after each turn so speed =0 mean no cooldown the entity will move on each turn
         self.speed_cooldown = 0
+        self.birth = 0
+        self.birth_cooldown = 0
         self.vision = 0
         self.max_pollution = 0
         self.temp = (0, 1)  # Perfect temp for creature
@@ -32,22 +34,53 @@ class Entity(ABC):
     def brain(self, myposition: tuple, entities_position: list, entities_matrix) -> str:
         if self.entity_speed_cooldown == 0 and self.entity_speed != -1:
             if self.check_threat(myposition, entities_position, entities_matrix):
+                print(self.entity_name + " want to flee")
                 return "Flee"
             elif (self.entity_hunger >= 50) and (
                     self.check_prey(myposition, entities_position, entities_matrix)):
+                print(self.entity_name + " want to eat")
                 return "Predation"
             else:
-                return "Idle"
+                if  self.birth == 0 and self.entity_hunger <= 40 and self.mate_check(myposition, entities_position, entities_matrix):
+                    print(self.entity_name + " want to mate")
+                    return "Mate"
+                else:
+                    return "Idle"
         else:
             return "Stay"
-
-
+    # check if there is mate that is not myself, same specie , can birth and are close enough to me
+    def mate_check(self, myposition, entities_position, entities_matrix):
+        for entity_position in entities_position:
+            entity = entities_matrix[entity_position]
+            if entity != self and (entity.entity_name == self.entity_name) and entity.entity_birth == 0 and self.heuristique(myposition,
+                                                                       entity_position) <= self.entity_vision:
+                return True
+        return False
     def eat(self, entity):
         value = entity.entity_type * 20 + 10
         hunger = self.entity_hunger
         self.set_entity_hunger(hunger - min(hunger, value))
         print(self.entity_name + " is not hungry anymore")
 
+    def mate(self, myposition, mate: "Entity", world):
+        hunger_consummed = 30
+        child_future_position = self.enough_space_around_me(myposition, world)
+        if child_future_position != None:
+            self.set_entity_hunger(self.entity_hunger+hunger_consummed)
+            self.set_entity_birth(self.entity_birth_cooldown)
+            mate.set_entity_birth(mate.entity_birth_cooldown)
+            world.set_entity(self.entity_name, *child_future_position)
+
+
+
+
+    def enough_space_around_me(self, myposition, world):
+        for i in range(-1, 1, 1):
+           for j in range(-1, 1, 1):
+               if i != 0 or j != 0:
+                   if world.entities[(myposition[0] + i, myposition[1] + j)] == 0:
+                           return (myposition[0] + i, myposition[1] + j)
+        return None
 
     def heuristique(self, position, target_position):
         x_distance = abs(target_position[0] - position[0])
@@ -170,7 +203,18 @@ class Entity(ABC):
     def set_entity_preys(self, preys: list):
         for i in range(len(preys)):
             self.prey_set.add(preys[i])
+    @property
+    def entity_birth(self):
+        return self.birth
+    def set_entity_birth(self, birth):
+        self.birth = birth
 
+    @property
+    def entity_birth_cooldown(self):
+        return self.birth_cooldown
+
+    def set_entity_birth_cooldown(self, birth_cooldown):
+        self.birth_cooldown = birth_cooldown
 
 # CLASSES POUR CHAQUE ENTITE SPECIFIQUE
 class Plankton(Entity):
@@ -179,6 +223,8 @@ class Plankton(Entity):
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
+        self.set_entity_birth(10)
+        self.set_entity_birth_cooldown(10)
         self.set_entity_life_span(100)
         self.set_entity_speed(-1)
         self.set_entity_vision(0)
@@ -195,6 +241,8 @@ class Crab(Entity):
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
+        self.set_entity_birth(10)
+        self.set_entity_birth_cooldown(10) # not configured yet
         self.set_entity_life_span((3, 5)) # not configured yet
         self.set_entity_speed(-1) # not configured yet
         self.set_entity_vision(0) # not configured yet
@@ -212,6 +260,8 @@ class Medusa(Entity):
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
+        self.set_entity_birth(10)
+        self.set_entity_birth_cooldown(10)  # not configured yet
         self.set_entity_life_span((1, 3))  # not configured yet
         self.set_entity_speed(-1)  # not configured yet
         self.set_entity_vision(0)  # not configured yet
@@ -229,6 +279,8 @@ class Fish(Entity):
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
+        self.set_entity_birth(10)
+        self.set_entity_birth_cooldown(10)  # not configured yet
         self.set_entity_life_span((100, 200))  # not configured yet
         self.set_entity_speed(1)  # not configured yet
         self.set_entity_vision(5)  # not configured yet
@@ -246,6 +298,8 @@ class Shark(Entity):
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
+        self.set_entity_birth(10)
+        self.set_entity_birth_cooldown(10)
         self.set_entity_life_span((300, 500))
         self.set_entity_speed(0)
         self.set_entity_vision(20)
@@ -263,6 +317,8 @@ class Orca(Entity):
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
+        self.set_entity_birth(10)
+        self.set_entity_birth_cooldown(10)   # not configured yet
         self.set_entity_life_span((50, 90))  # not configured yet
         self.set_entity_speed(-1)  # not configured yet
         self.set_entity_vision(0)  # not configured yet

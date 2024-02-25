@@ -113,3 +113,11 @@ class World:
                 return True
             else:
                 return False
+
+    # condition to move in water, cant move in coral and cant not eat or crush another entities
+    def normal_movement_condition(self, new_x, new_y):
+        return self.predator_condition(new_x, new_y) and self.entities[new_x, new_y] == 0
+
+    # Conditions to move in water, can t move in coral and be free to eat
+    def predator_condition(self, new_x, new_y):
+        return self.inboard((new_x, new_y)) and self.grid[new_x, new_y] != 0 and self.grid[new_x, new_y].case_type != "Coral"

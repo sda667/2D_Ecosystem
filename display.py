@@ -16,7 +16,7 @@ class GridDisplay:
         pg.init()
         self.world = world
         self.cell_size = cell_size
-        self.screen = pg.display.set_mode(screen_size)
+        self.screen = pg.display.set_mode(screen_size, pg.RESIZABLE)
         self.screen_size = screen_size
         self.clock = pg.time.Clock()
         self.config = self.__load_config("config.json")
