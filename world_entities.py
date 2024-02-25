@@ -196,7 +196,7 @@ class Crab(Entity):
         self.set_entity_hunger(hunger)
 
         self.set_entity_life_span((3, 5)) # not configured yet
-        self.set_entity_speed(-1) # not configured yet
+        self.set_entity_speed(0) # not configured yet
         self.set_entity_vision(0) # not configured yet
 
         self.set_entity_name("Crab")
@@ -212,7 +212,7 @@ class Medusa(Entity):
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
-        self.set_entity_life_span((1, 3))  # not configured yet
+        self.set_entity_life_span((1, 3))
         self.set_entity_speed(-1)  # not configured yet
         self.set_entity_vision(0)  # not configured yet
 
@@ -262,9 +262,9 @@ class Orca(Entity):
         super().__init__()
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
-
-        self.set_entity_life_span((50, 90))  # not configured yet
-        self.set_entity_speed(-1)  # not configured yet
+        self.set_entity_life_span((400, 500))  # not configured yet
+        #self.set_entity_life_span((50, 90))  # not configured yet
+        self.set_entity_speed(0)  # not configured yet
         self.set_entity_vision(0)  # not configured yet
 
         self.set_entity_name("Orca")

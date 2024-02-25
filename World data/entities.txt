@@ -3,4 +3,4 @@ Fish 24 24
 Shark 50 23
 Fish 10 24
 Crab 40 31
-Whale 80 20
+Orca 20 20
