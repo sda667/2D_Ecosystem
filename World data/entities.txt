@@ -1,6 +1,6 @@
 Shark 23 23
 Fish 24 24
-Shark 50 23
+Shark 0 59
 Fish 10 24
 Crab 40 31
 Orca 20 20

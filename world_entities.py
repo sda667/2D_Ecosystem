@@ -60,7 +60,6 @@ class Entity(ABC):
         value = entity.entity_type * 20 + 10
         hunger = self.entity_hunger
         self.set_entity_hunger(hunger - min(hunger, value))
-        print(self.entity_name + " is not hungry anymore")
 
     def mate(self, myposition, mate: "Entity", world):
         hunger_consummed = 30
@@ -69,7 +68,7 @@ class Entity(ABC):
             self.set_entity_hunger(self.entity_hunger+hunger_consummed)
             self.set_entity_birth(self.entity_birth_cooldown)
             mate.set_entity_birth(mate.entity_birth_cooldown)
-            world.set_entity(self.entity_name, *child_future_position)
+            world.set_entity_child(self.entity_name, *child_future_position)
 
 
 
@@ -88,12 +87,12 @@ class Entity(ABC):
         distance = math.sqrt(math.pow(x_distance, 2) + math.pow(y_distance, 2))
         return distance
 
-
+    # Check if there are threat that can i see and that he can nearly see to prevent flee from a threat that can not see me
     def check_threat(self, myposition, entities_position: list, entities_matrix):
         for entity_position in entities_position:
             entity = entities_matrix[entity_position]
             if (self.entity_name in entity.prey_set) and self.heuristique(myposition,
-                                                                       entity_position) <= self.entity_vision:
+                                                                       entity_position) <= min(self.entity_vision, entity.entity_vision+1):
                 return True
         return False
 

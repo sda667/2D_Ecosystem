@@ -14,8 +14,6 @@ def main(cell_size=15, x_size = 60, y_size=120) -> None:
     # Initialisation du monde
     monde = World(x_size, y_size)
     monde.generate_world("World data/entities.txt")
-    print(len(monde.entities))
-    print(len(monde.entities[1]))
 
     
     grid_display = GridDisplay(monde, cell_size=cell_size, screen_size=screen_size)  # Taille d'une case en pixels

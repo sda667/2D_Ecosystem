@@ -108,17 +108,18 @@ class controller():
         dx = closest_enemy[0] - x
         dy = closest_enemy[1] - y
         target_position = (x - dx, y - dy)
-        actions = self.astar((x, y), target_position)
-        print(actions)
-        if len(actions) != 0:
-            action = actions[0]
-            dx, dy = self.directions[action]
-            new_x, new_y = x + dx, y + dy
-            entity = self.world.entities[(x, y)]
-            if self.world.normal_movement_condition(new_x, new_y):
-                self.move(entity, (x, y), (new_x, new_y))
-                self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
-                entity.set_last_movement(dx, dy)
+        if (self.world.predator_condition(*target_position)):
+            actions = self.astar((x, y), target_position)
+            if len(actions) != 0:
+                action = actions[0]
+                dx, dy = self.directions[action]
+                new_x, new_y = x + dx, y + dy
+                entity = self.world.entities[(x, y)]
+                if self.world.normal_movement_condition(new_x, new_y):
+                    self.move(entity, (x, y), (new_x, new_y))
+                    self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
+                    entity.set_last_movement(dx, dy)
+
 
     # UPDATE DU MOUVEMENT D'UNE ENTITE
 
@@ -238,6 +239,6 @@ class controller():
             if self.world.predator_condition(*target_position):
                 if possible_actions[direction] == target_position:
                     return [(possible_actions[direction], direction)]
-                if self.world.entities[possible_actions[direction]] == 0:
+                if self.world.predator_condition(*possible_actions[direction]) and self.world.entities[possible_actions[direction]] == 0:
                     real_possible_actions.append((possible_actions[direction], direction))
         return real_possible_actions

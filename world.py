@@ -94,13 +94,16 @@ class World:
             elif name == "Orca":
                 self.entities[x, y] = Orca()
 
+    def set_entity_child(self, name, x, y):
+        self.set_entity(name, x, y)
+        self.entities[x, y].entity_hunger = 50
     # ENLEVE UNE ENTITE D'UNE CASE
     def clear_entity(self, x, y):
         self.entities[(x, y)] = 0
 
     # VERIFIE SI LA POSITION EST VALIDE
     def inboard(self, position):
-        if (0 <= position[0] < self.i_size) and (0 <= position[1] < self.j_size):
+        if (0 <= position[0] < self.j_size) and (0 <= position[1] < self.i_size):
             return True
         else:
             return False

@@ -34,7 +34,6 @@ class GridDisplay:
         tiles = {}
         for tile_type, path in self.config["TilesPath"].items():
             tiles[tile_type] = pg.image.load(path).convert()
-        print(tiles)
         return tiles
     def __load_entities(self) -> None:
         entities = {}
@@ -124,7 +123,6 @@ class GridDisplay:
         running = True
         while running:
             for event in pg.event.get():
-                print("in event")
                 if event.type == pg.QUIT:
                     running = False
                 elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
@@ -134,7 +132,6 @@ class GridDisplay:
                 elif event.type == pg.KEYDOWN and event.key == pg.K_UP:
                     mainloop = True
                 elif event.type == pg.KEYDOWN:
-                    print(pg.key.name(event.key))
                     controllerUI.control_world(event.key)
             if mainloop:
                 self.__draw_grid()
