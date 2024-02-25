@@ -1,10 +1,14 @@
 import random
-from abc import ABC, abstractmethod
+from abc import ABC
 import random
 import math
 
 
+
 class Entity(ABC):
+    """
+    Classe abstraite d'entités, utilisée pour créer chaque entité spécifique
+    """
     def __init__(self) -> None:
         super().__init__()
         self.name = "NONE"
@@ -24,6 +28,7 @@ class Entity(ABC):
         self.temp = (0, 1)  # Perfect temp for creature
         self.prey_set = set("Plankton")
 
+
     def brain(self, myposition: tuple, entities_position: list, entities_matrix) -> str:
         if self.entity_speed_cooldown == 0 and self.entity_speed != -1:
             if self.check_threat(myposition, entities_position, entities_matrix):
@@ -36,17 +41,20 @@ class Entity(ABC):
         else:
             return "Stay"
 
+
     def eat(self, entity):
         value = entity.entity_type * 20 + 10
         hunger = self.entity_hunger
         self.set_entity_hunger(hunger - min(hunger, value))
         print(self.entity_name + " is not hungry anymore")
 
+
     def heuristique(self, position, target_position):
         x_distance = abs(target_position[0] - position[0])
         y_distance = abs(target_position[1] - position[1])
         distance = math.sqrt(math.pow(x_distance, 2) + math.pow(y_distance, 2))
         return distance
+
 
     def check_threat(self, myposition, entities_position: list, entities_matrix):
         for entity_position in entities_position:
@@ -56,6 +64,7 @@ class Entity(ABC):
                 return True
         return False
 
+
     def check_prey(self, myposition, entities_position, entities_matrix):
         for entity_position in entities_position:
             entity = entities_matrix[entity_position]
@@ -64,6 +73,7 @@ class Entity(ABC):
                 return True
         return False
 
+    # GETTER ET SETTERS
     @property
     def entity_name(self) -> str:
         return self.name
@@ -162,6 +172,7 @@ class Entity(ABC):
             self.prey_set.add(preys[i])
 
 
+# CLASSES POUR CHAQUE ENTITE SPECIFIQUE
 class Plankton(Entity):
     def __init__(self, age=0, hunger=0) -> None:
         super().__init__()

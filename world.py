@@ -4,7 +4,11 @@ from world_entities import *
 import random
 
 
+
 class World:
+    """
+    Classe du monde comprenant la création et gestions des cases et entités
+    """
     def __init__(self, x_size: int, y_size: int) -> None:
         # initialise the grid
         x, y = np.arange(0, x_size, 1), np.arange(0, y_size, 1)
@@ -20,12 +24,14 @@ class World:
         self.crab_existence = (20, 30)
         self.temperature = 20
 
+
     # GETTER DE LA GRILLE
     @property
     def get_grid(self):
         return self.grid
 
-    # DEFINIR LE TYPE DE CASE (MER, CORAIL, ETC.)
+
+    # DEFINIR LE TYPE DE CASE
     def set_case(self, x: int, y: int, type: str):
         if type == "S":
             self.grid[(x, y)] = SurfaceSea()
@@ -38,7 +44,8 @@ class World:
         elif type == ".":
             pass
 
-    # CREER LES ENTITES
+
+    # CREATION DES ENTITES
     def create_entities(self, foreground):
         with open(foreground) as file:
             data = file.readlines()
@@ -56,6 +63,7 @@ class World:
                     self.set_case(i, j, case_type)
         self.create_entities(foreground)
     
+
     # CREE UN MONDE AVEC UN NOMBRE DE COUCHES ALEATOIRES DANS CERTAINES PROPORTIONS DONNEES
     def generate_world(self, foreground):
         sky_proportion = random.randint(9,13)
@@ -91,10 +99,12 @@ class World:
             elif name == "Orca":
                 self.entities[x, y] = Orca()
 
+
     # ENLEVE UNE ENTITE D'UNE CASE
     def clear_entity(self, x, y):
         self.entities[(x, y)] = 0
 
+    # VERIFIE SI LA POSITION EST VALIDE
     def inboard(self, position):
         if (position[0] < 0) or (position[1] < 0):
             return False

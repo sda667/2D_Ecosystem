@@ -10,4 +10,3 @@ class ControllerUI:
             self.world.temperature += 1
         else:
             pass
-            
