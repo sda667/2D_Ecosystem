@@ -16,6 +16,8 @@ class World:
         self.grid = np.zeros_like(grid_x, dtype=Case)  # Manipuler grid avec grid[(x, y)]
         self.i_size, self.j_size = x_size, y_size
         self.entities = np.zeros_like(grid_x, dtype=Entity)
+        self.sun = True # is the sun present.
+        self.plankton = 0 # 0 if the sun is not present and 0 < plankton <= 1 if the sun is present
         self.shark_existence = (5, 15)
         self.fish_existence = (100, 150)
         self.plankton_existence = (250, 300)
@@ -49,7 +51,7 @@ class World:
             for entity in data:
                 entity_data = entity.split()
                 entity_name = entity_data[0]
-                self.set_entity(entity_name, int(entity_data[1]), int(entity_data[2]))
+                self.set_entity(entity_name, int(entity_data[2]), int(entity_data[1]))
 
     # CREER LE MONDE (A PARTIR DE DEUX FICHIERS, UN POUR LE FOND ET UN POUR LE PREMIER PLAN)
     def create_world(self, background, foreground):
@@ -96,7 +98,9 @@ class World:
 
     def set_entity_child(self, name, x, y):
         self.set_entity(name, x, y)
-        self.entities[x, y].entity_hunger = 50
+        entity = self.entities[x, y]
+        entity.set_entity_hunger(40)
+        entity.set_entity_birth(entity.entity_birth_cooldown)
     # ENLEVE UNE ENTITE D'UNE CASE
     def clear_entity(self, x, y):
         self.entities[(x, y)] = 0

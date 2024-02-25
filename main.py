@@ -22,11 +22,15 @@ def main(cell_size=15, x_size = 60, y_size=120) -> None:
     # Initialisation du contrôleur
 
     controleur = controller(monde)
-
+    plankton_update_timer = 0
     # Boucle d'action du monde (plus besoin de toucher à l'affichage)
     while True:
+        plankton_update_timer+=1
         time.sleep(0.2)
         controleur.update_entities()
+        if plankton_update_timer%10 == 0 :
+            plankton_update_timer%= 10
+            controleur.plankton_update()
 
 if __name__ == "__main__":
   main()

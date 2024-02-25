@@ -77,7 +77,7 @@ class Entity(ABC):
         for i in range(-1, 1, 1):
            for j in range(-1, 1, 1):
                if i != 0 or j != 0:
-                   if world.entities[(myposition[0] + i, myposition[1] + j)] == 0:
+                   if world.normal_movement_condition(*(myposition[0] + i, myposition[1] + j)):
                            return (myposition[0] + i, myposition[1] + j)
         return None
 
@@ -279,7 +279,7 @@ class Fish(Entity):
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
-        self.set_entity_birth(10)
+        self.set_entity_birth(0)
         self.set_entity_birth_cooldown(10)  # not configured yet
         self.set_entity_life_span((100, 200))  # not configured yet
         self.set_entity_speed(1)  # not configured yet
@@ -299,7 +299,7 @@ class Shark(Entity):
         self.set_entity_hunger(hunger)
 
         self.set_entity_birth(10)
-        self.set_entity_birth_cooldown(10)
+        self.set_entity_birth_cooldown(50)
         self.set_entity_life_span((300, 500))
         self.set_entity_speed(0)
         self.set_entity_vision(20)

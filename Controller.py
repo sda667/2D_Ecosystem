@@ -144,6 +144,9 @@ class controller():
         entity = self.world.entities[(x, y)]
         entity.set_entity_hunger(entity.entity_hunger + 1)
         entity.set_entity_age(entity.entity_age + 1)
+        if entity.entity_name == "Fish" and entity.entity_hunger > 0:
+            hunger_recover =  min(self.world.plankton, entity.entity_hunger)
+            entity.set_entity_hunger(entity.entity_hunger-hunger_recover)
         if entity.entity_birth > 0:
             entity.set_entity_birth(entity.entity_birth-1)
         if entity.entity_hunger >= 100 or entity.entity_age >= entity.entity_life_span[
@@ -178,7 +181,10 @@ class controller():
                 distance = self.heuristique((x, y), mate)
                 closest_mate = mate
         target_position = closest_mate
+        print(myself.entity_name + f" approching position {target_position}")
         actions = self.astar((x, y), target_position)
+        if actions == None:
+            return
         if len(actions) != 0:
             action = actions[0]
             dx, dy = self.directions[action]
@@ -242,3 +248,8 @@ class controller():
                 if self.world.predator_condition(*possible_actions[direction]) and self.world.entities[possible_actions[direction]] == 0:
                     real_possible_actions.append((possible_actions[direction], direction))
         return real_possible_actions
+    def plankton_update(self):
+        if self.world.sun:
+            self.world.plankton = random.choices([0.5, 1, 2, 4], [0.2, 0.5, 0.2, 0.1])[0]
+        else:
+            self.world.plankton = 0
