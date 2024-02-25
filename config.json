@@ -27,7 +27,7 @@
     },
     "WorldSettings": {
         "world_x_size": 60,
-        "world_y_size": 60,
+        "world_y_size": 120,
         "world_background": "World data/background.txt",
         "world_creature": "World data/creatures.txt"
     }

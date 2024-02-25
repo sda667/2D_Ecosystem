@@ -4,11 +4,11 @@ from world_entities import *
 import random
 
 
-
 class World:
     """
     Classe du monde comprenant la création et gestions des cases et entités
     """
+
     def __init__(self, x_size: int, y_size: int) -> None:
         # initialise the grid
         x, y = np.arange(0, x_size, 1), np.arange(0, y_size, 1)
@@ -24,12 +24,10 @@ class World:
         self.crab_existence = (20, 30)
         self.temperature = 20
 
-
     # GETTER DE LA GRILLE
     @property
     def get_grid(self):
         return self.grid
-
 
     # DEFINIR LE TYPE DE CASE
     def set_case(self, x: int, y: int, type: str):
@@ -43,7 +41,6 @@ class World:
             self.grid[(x, y)] = DeepSea()
         elif type == ".":
             pass
-
 
     # CREATION DES ENTITES
     def create_entities(self, foreground):
@@ -62,26 +59,24 @@ class World:
                 for i, case_type in enumerate(line):
                     self.set_case(i, j, case_type)
         self.create_entities(foreground)
-    
 
     # CREE UN MONDE AVEC UN NOMBRE DE COUCHES ALEATOIRES DANS CERTAINES PROPORTIONS DONNEES
     def generate_world(self, foreground):
-        sky_proportion = random.randint(9,13)
-        surfacesea_proportion = random.randint (58, 66)
-        sea_proportion = random.randint(9,13)
-        sky_layers = round(sky_proportion/100*self.i_size)
-        surfacesea_layers = round(surfacesea_proportion/100*self.i_size)
-        sea_layers = round(sea_proportion/100*self.i_size)
+        sky_proportion = random.randint(9, 13)
+        surfacesea_proportion = random.randint(58, 66)
+        sea_proportion = random.randint(9, 13)
+        sky_layers = round(sky_proportion / 100 * self.i_size)
+        surfacesea_layers = round(surfacesea_proportion / 100 * self.i_size)
+        sea_layers = round(sea_proportion / 100 * self.i_size)
         deepsea_layers = self.i_size - sky_layers - surfacesea_layers - sea_layers
 
-        line_values = ['.']*sky_layers + ['S']*surfacesea_layers + ['M']*sea_layers + ['D']*deepsea_layers
+        line_values = ['.'] * sky_layers + ['S'] * surfacesea_layers + ['M'] * sea_layers + ['D'] * deepsea_layers
         world_matrix = [[value] * self.j_size for value in line_values]
 
         for i in range(self.i_size):
             for j in range(self.j_size):
                 self.set_case(j, i, world_matrix[i][j])
         self.create_entities(foreground)
-
 
     # POSE UNE ENTITE SUR UNE CASE
     def set_entity(self, name, x, y):
@@ -99,20 +94,16 @@ class World:
             elif name == "Orca":
                 self.entities[x, y] = Orca()
 
-
     # ENLEVE UNE ENTITE D'UNE CASE
     def clear_entity(self, x, y):
         self.entities[(x, y)] = 0
 
     # VERIFIE SI LA POSITION EST VALIDE
     def inboard(self, position):
-        if (position[0] < 0) or (position[1] < 0):
-            return False
+        if (0 <= position[0] < self.i_size) and (0 <= position[1] < self.j_size):
+            return True
         else:
-            if (position[0] < self.i_size) and (position[1] < self.j_size):
-                return True
-            else:
-                return False
+            return False
 
     # condition to move in water, cant move in coral and cant not eat or crush another entities
     def normal_movement_condition(self, new_x, new_y):
@@ -121,3 +112,4 @@ class World:
     # Conditions to move in water, can t move in coral and be free to eat
     def predator_condition(self, new_x, new_y):
         return self.inboard((new_x, new_y)) and self.grid[new_x, new_y] != 0 and self.grid[new_x, new_y].case_type != "Coral"
+

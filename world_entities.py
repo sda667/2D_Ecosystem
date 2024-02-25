@@ -244,7 +244,7 @@ class Crab(Entity):
         self.set_entity_birth(10)
         self.set_entity_birth_cooldown(10) # not configured yet
         self.set_entity_life_span((3, 5)) # not configured yet
-        self.set_entity_speed(-1) # not configured yet
+        self.set_entity_speed(0) # not configured yet
         self.set_entity_vision(0) # not configured yet
 
         self.set_entity_name("Crab")
@@ -259,6 +259,7 @@ class Medusa(Entity):
         super().__init__()
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
+
 
         self.set_entity_birth(10)
         self.set_entity_birth_cooldown(10)  # not configured yet
@@ -319,8 +320,9 @@ class Orca(Entity):
 
         self.set_entity_birth(10)
         self.set_entity_birth_cooldown(10)   # not configured yet
-        self.set_entity_life_span((50, 90))  # not configured yet
-        self.set_entity_speed(-1)  # not configured yet
+        self.set_entity_life_span((400, 500))  # not configured yet
+        #self.set_entity_life_span((50, 90))  # not configured yet
+        self.set_entity_speed(0)  # not configured yet
         self.set_entity_vision(0)  # not configured yet
 
         self.set_entity_name("Orca")
