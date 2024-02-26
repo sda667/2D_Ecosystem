@@ -4,6 +4,7 @@
 venv
 .idea
 __pycache__
+World data/entities.txt
 # Ignore all files in a specific directory
 venv/
 .idea/

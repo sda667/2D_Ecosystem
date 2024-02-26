@@ -5,14 +5,17 @@ from world import *
 import time
 import threading
 from Controller import controller
+import random
 
 
 # MAIN TEST
-def main(cell_size=15, x_size = 60, y_size=120) -> None:
+def main(cell_size=15, x_size = 60, y_size=120, seed=random.randint(0, 999)) -> None:
     # Taille de la fenêtre
     screen_size = (y_size*cell_size, x_size*cell_size)
     # Initialisation du monde
-    monde = World(x_size, y_size)
+    monde = World(x_size, y_size, seed)
+
+    monde.generate_entities("World data/entities.txt")
     monde.generate_world("World data/entities.txt")
 
     

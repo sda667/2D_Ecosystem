@@ -15,7 +15,7 @@ class Entity(ABC):
         self.name = "NONE"
         self.type = 0  # Niveau dans la chaine alimentaire (plus grand = plus de nourriture) (à utiliser pour manger)
         self.age = 0
-        self.life_span = (0, 0)
+        self.max_age = 0
         self.sex = random.randint(0, 1)  # 0 Female # 1 Male
         self.zone = ("Near Beach", "Mid Ocean", "Far Ocean")
         self.life_style = "individual"
@@ -162,11 +162,11 @@ class Entity(ABC):
         self.life_style = life_style
 
     @property
-    def entity_life_span(self) -> tuple:
-        return self.life_span
+    def entity_max_age(self) -> int:
+        return self.max_age
 
-    def set_entity_life_span(self, max_age: tuple):
-        self.life_span = max_age
+    def set_entity_max_age(self, max_age: int):
+        self.max_age = max_age
 
     @property
     def entity_zone(self) -> str:
@@ -237,7 +237,7 @@ class Plankton(Entity):
 
         self.set_entity_birth(10)
         self.set_entity_birth_cooldown(10)
-        self.set_entity_life_span(100)
+        self.set_entity_max_age(100)
         self.set_entity_speed(-1)
         self.set_entity_vision(0)
 
@@ -248,14 +248,14 @@ class Plankton(Entity):
 
 
 class Crab(Entity):
-    def __init__(self, age=0, hunger=0) -> None:
+    def __init__(self, age=0, hunger=0, max_age=random.randint(3,6)) -> None:
         super().__init__()
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
         self.set_entity_birth(10)
         self.set_entity_birth_cooldown(10) # not configured yet
-        self.set_entity_life_span((50, 200)) # not configured yet
+        self.set_entity_max_age(max_age) # not configured yet
         self.set_entity_speed(0) # not configured yet
         self.set_entity_vision(0) # not configured yet
 
@@ -267,7 +267,7 @@ class Crab(Entity):
 
 
 class Medusa(Entity):
-    def __init__(self, age=0, hunger=0) -> None:
+    def __init__(self, age=0, hunger=0,max_age=random.randint(2, 4)) -> None:
         super().__init__()
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
@@ -275,7 +275,7 @@ class Medusa(Entity):
 
         self.set_entity_birth(10)
         self.set_entity_birth_cooldown(10)  # not configured yet
-        self.set_entity_life_span((100, 300))  # not configured yet
+        self.set_entity_max_age(max_age)  # not configured yet
         self.set_entity_speed(-1)  # not configured yet
         self.set_entity_vision(0)  # not configured yet
 
@@ -287,18 +287,18 @@ class Medusa(Entity):
 
 
 class Fish(Entity):
-    def __init__(self, age=0, hunger=0) -> None:
+    def __init__(self, age=0, hunger=0, max_age=random.randint(5, 8)) -> None:
         super().__init__()
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
         self.set_entity_birth(0)
         self.set_entity_birth_cooldown(10)  # not configured yet
-        self.set_entity_life_span((100, 200))  # not configured yet
+        self.set_entity_max_age(max_age)  # not configured yet
         self.set_entity_speed(1)  # not configured yet
         self.set_entity_vision(5)  # not configured yet
 
-        self.set_entity_name("Fish" + str(random.randint(0,2)))
+        self.set_entity_name("Fish" + str(random.randint(0, 2)))
         self.set_entity_type(1)
         self.set_entity_zone(("Near Beach", "Mid Ocean"))
         self.set_entity_depth(("Surface Sea", "Sea"))
@@ -331,14 +331,14 @@ class Fish(Entity):
 
 
 class Shark(Entity):
-    def __init__(self, age=0, hunger=0) -> None:
+    def __init__(self, age=0, hunger=0,max_age=random.randint(20, 30)) -> None:
         super().__init__()
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
         self.set_entity_birth(10)
         self.set_entity_birth_cooldown(50)
-        self.set_entity_life_span((300, 500))
+        self.set_entity_max_age(max_age)
         self.set_entity_speed(0)
         self.set_entity_vision(20)
 
@@ -350,15 +350,14 @@ class Shark(Entity):
 
 
 class Orca(Entity):
-    def __init__(self, age=0, hunger=0) -> None:
+    def __init__(self, age=0, hunger=0, max_age=random.randint(50, 90)) -> None:
         super().__init__()
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
         self.set_entity_birth(10)
         self.set_entity_birth_cooldown(10)   # not configured yet
-        self.set_entity_life_span((400, 500))  # not configured yet
-        #self.set_entity_life_span((50, 90))  # not configured yet
+        self.set_entity_max_age(max_age)
         self.set_entity_speed(0)  # not configured yet
         self.set_entity_vision(30)  # not configured yet
 

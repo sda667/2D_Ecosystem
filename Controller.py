@@ -149,7 +149,7 @@ class controller():
     def __status_update(self, x, y, entity_positions):
         entity = self.world.entities[(x, y)]
         # TODO change the value next to entity.entity_age to modify the aging of each entities/ turn
-        entity.set_entity_age(entity.entity_age + 0.1)
+        entity.set_entity_age(entity.entity_age + 0.001)
         # TODO change the value next to entity.entity_age to modify the evolution of hunger  of each entities/ turn
         entity.set_entity_hunger(entity.entity_hunger + 0.1)
         # for fish only, if fish is a fish, fish can eat and fish is in nearsea zone then it feed itself
@@ -159,16 +159,9 @@ class controller():
             entity.set_entity_hunger(entity.entity_hunger-hunger_recover)
         if entity.entity_birth > 0:
             entity.set_entity_birth(max(entity.entity_birth-1,0)) # to prevent having a negatif value
-        if entity.entity_hunger >= 100 or entity.entity_age >= entity.entity_life_span[
-            1]:
+        if entity.entity_hunger >= 100 or entity.entity_age >= entity.entity_max_age:
             self.world.clear_entity(x, y)
             entity_positions.remove((x, y))
-
-        else:
-            if entity.entity_age >= entity.entity_life_span[0]:
-                if random.choices([0, 1], [0.8, 0.2]) == 1:
-                    self.world.clear_entity(x, y)
-                    entity_positions.remove((x, y))
 
 
     # S'APPROCHER D"UNE CREATURE D"UNE MEME ESPECE ET SE REPRODUIRE
