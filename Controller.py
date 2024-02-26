@@ -2,6 +2,7 @@ import math
 import random
 from priority_queue import PriorityQueue  # USING priority queue used in project 311
 import world
+
 # MOUVEMENTS POSSIBLES (ENUM?)
 RIGHT = 0
 LEFT = 1
@@ -9,7 +10,7 @@ UP = 2
 DOWN = 3
 
 
-class controller():
+class Controller:
     def __init__(self, world):
         self.world = world
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
@@ -57,9 +58,9 @@ class controller():
         closest_prey = None
         if isinstance(myself, world.Fish):
             closest_prey = myself.nearsea_check((x, y), self.world)
-            if closest_prey == None:
+            if closest_prey is None:
                 # if there is not any nearsea zone free above us , we move to left or right
-               closest_prey = random.choices([(x-1, y), (x+1, y)], [0.5, 0.5])[0]
+                closest_prey = random.choices([(x - 1, y), (x + 1, y)], [0.5, 0.5])[0]
         else:
             preys = []
             # Liste des proies possibles
@@ -114,7 +115,7 @@ class controller():
         dx = closest_enemy[0] - x
         dy = closest_enemy[1] - y
         target_position = (x - dx, y - dy)
-        if (self.world.predator_condition(*target_position)):
+        if self.world.predator_condition(*target_position):
             actions = self.astar((x, y), target_position)
             if len(actions) != 0:
                 action = actions[0]
@@ -125,7 +126,6 @@ class controller():
                     self.move(entity, (x, y), (new_x, new_y))
                     self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
                     entity.set_last_movement(dx, dy)
-
 
     # UPDATE DU MOUVEMENT D'UNE ENTITE
 
@@ -154,15 +154,14 @@ class controller():
         entity.set_entity_hunger(entity.entity_hunger + 0.1)
         # for fish only, if fish is a fish, fish can eat and fish is in nearsea zone then it feed itself
         # TODO change the value for entity.entity_hunger to set the maximal value for hunger that fish can reach by eating plankton
-        if (isinstance(entity, world.Fish) and entity.entity_hunger > 0 and entity.isnearsea(self.world, (x, y))):
-            hunger_recover =  min(self.world.plankton, entity.entity_hunger)
-            entity.set_entity_hunger(entity.entity_hunger-hunger_recover)
+        if isinstance(entity, world.Fish) and entity.entity_hunger > 0 and entity.isnearsea(self.world, (x, y)):
+            hunger_recover = min(self.world.plankton, entity.entity_hunger)
+            entity.set_entity_hunger(entity.entity_hunger - hunger_recover)
         if entity.entity_birth > 0:
-            entity.set_entity_birth(max(entity.entity_birth-1,0)) # to prevent having a negatif value
+            entity.set_entity_birth(max(entity.entity_birth - 1, 0))  # to prevent having a negatif value
         if entity.entity_hunger >= 100 or entity.entity_age >= entity.entity_max_age:
             self.world.clear_entity(x, y)
             entity_positions.remove((x, y))
-
 
     # S'APPROCHER D"UNE CREATURE D"UNE MEME ESPECE ET SE REPRODUIRE
     def __mate_update(self, x, y, entity_positions):
@@ -192,7 +191,7 @@ class controller():
             dx, dy = self.directions[action]
             new_x, new_y = x + dx, y + dy
             entity = self.world.entities[(x, y)]
-            if ((new_x, new_y) == closest_mate):
+            if (new_x, new_y) == closest_mate:
                 entity.mate((x, y), self.world.entities[closest_mate], self.world)
             if self.world.normal_movement_condition(new_x, new_y):
                 self.move(entity, (x, y), (new_x, new_y))
@@ -221,8 +220,8 @@ class controller():
         marked_state = set()
         marked_state.add(current_position)
         while not stack.is_empty():
-            smallest_G_H = stack.pop()
-            current_position, actions, Greedy = smallest_G_H
+            smallest_g_h = stack.pop()
+            current_position, actions, Greedy = smallest_g_h
             if current_position == target_position:
                 return actions
             for next_position, action in self.get_actions(current_position, target_position):
@@ -247,9 +246,11 @@ class controller():
             if self.world.predator_condition(*target_position):
                 if possible_actions[direction] == target_position:
                     return [(possible_actions[direction], direction)]
-                if self.world.predator_condition(*possible_actions[direction]) and self.world.entities[possible_actions[direction]] == 0:
+                if self.world.predator_condition(*possible_actions[direction]) and self.world.entities[
+                    possible_actions[direction]] == 0:
                     real_possible_actions.append((possible_actions[direction], direction))
         return real_possible_actions
+
     def plankton_update(self):
         if self.world.sun:
             self.world.plankton = random.choices([0.5, 1, 2, 4], [0.2, 0.5, 0.2, 0.1])[0]

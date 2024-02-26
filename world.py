@@ -4,6 +4,26 @@ from world_entities import *
 import random
 
 
+def generate_entities(entities_file):
+    used_position = set()
+    with open("World data/entities_setting.txt", 'r') as file, open(entities_file, 'w') as entities:
+        for line in file:
+            if file != "\n" or file != '':
+                values = line.strip(' ').split()
+                population = random.randint(int(values[1]),
+                                            int(values[2]))  # Random value between the set base population
+                for _ in range(population):
+                    new_pos = (random.randint(8, 59), random.randint(1, 119))
+                    while new_pos in used_position:  # search for new not used position
+                        new_pos = (random.randint(8, 59), random.randint(1, 119))
+                    used_position.add(new_pos)
+                    age = str(random.randint(0, int(values[3])))  # Age under the life span
+                    hunger = str(random.randint(0, 30))  # hunger to start with
+                    max_age = str(random.randint(int(values[3]), int(values[4])))  # Age of death inside the life span
+                    entities.write(values[0] + ' ' + str(new_pos[0]) + ' ' + str(
+                        new_pos[1]) + ' ' + age + ' ' + hunger + ' ' + max_age + '\n')
+
+
 class World:
     """
     Classe du monde comprenant la création et gestions des cases et entités
@@ -17,8 +37,8 @@ class World:
         self.grid = np.zeros_like(grid_x, dtype=Case)  # Manipuler grid avec grid[(x, y)]
         self.i_size, self.j_size = x_size, y_size
         self.entities = np.zeros_like(grid_x, dtype=Entity)
-        self.sun = True # is the sun present.
-        self.plankton = 0 # 0 if the sun is not present and 0 < plankton <= 1 if the sun is present
+        self.sun = True  # is the sun present.
+        self.plankton = 0  # 0 if the sun is not present and 0 < plankton <= 1 if the sun is present
         self.shark_existence = (5, 15)
         self.fish_existence = (50, 100)
         self.plankton_existence = (250, 300)
@@ -26,8 +46,6 @@ class World:
         self.orcas_existence = (5, 15)
         self.crab_existence = (20, 30)
         self.temperature = 20
-
-
 
     # GETTER DE LA GRILLE
     @property
@@ -54,7 +72,8 @@ class World:
             for entity in data:
                 entity_data = entity.split()
                 entity_name = entity_data[0]
-                self.set_init_entity(entity_name, int(entity_data[2]), int(entity_data[1]), int(entity_data[3]), int(entity_data[4]),int(entity_data[5]))
+                self.set_init_entity(entity_name, int(entity_data[2]), int(entity_data[1]), int(entity_data[3]),
+                                     int(entity_data[4]), int(entity_data[5]))
 
     # CREER LE MONDE (A PARTIR DE DEUX FICHIERS, UN POUR LE FOND ET UN POUR LE PREMIER PLAN)
     def create_world(self, background, foreground):
@@ -83,28 +102,6 @@ class World:
                 self.set_case(j, i, world_matrix[i][j])
         self.create_entities(foreground)
 
-    def generate_entities(self, entities_file):
-        used_position = set()
-        with open("World data/entities_setting.txt", 'r') as file, open(entities_file, 'w') as entities:
-            for line in file:
-                if file != "\n" or file != '':
-                    values = line.strip(' ').split()
-                    population = random.randint(int(values[1]), int(values[2]))   # Random value between the set base population
-                    for _ in range(population):
-                        new_pos = (random.randint(8,59), random.randint(1,119))
-                        while new_pos in used_position: # search for new not used position
-                            new_pos = (random.randint(8, 59), random.randint(1, 119))
-                        used_position.add(new_pos)
-                        age = str(random.randint(0, int(values[3])))  # Age under the life span
-                        hunger = str(random.randint(0, 30))  # hunger to start with
-                        max_age = str(random.randint(int(values[3]), int(values[4])))  # Age of death inside the life span
-                        entities.write(values[0] + ' ' + str(new_pos[0]) + ' ' + str(new_pos[1]) + ' ' + age + ' ' + hunger + ' ' + max_age + '\n')
-
-
-
-
-
-
     # POSE UNE ENTITE SUR UNE CASE
     def set_init_entity(self, name, x, y, age, hunger, max_age):
         if self.grid[(x, y)] != 0 and self.grid[(x, y)].name != "Coral":
@@ -120,7 +117,6 @@ class World:
                 self.entities[x, y] = Medusa(age, hunger, max_age)
             elif name == "Orca":
                 self.entities[x, y] = Orca(age, hunger, max_age)
-
 
     def set_entity(self, name, x, y):
         if self.grid[(x, y)] != 0 and self.grid[(x, y)].name != "Coral":
@@ -142,6 +138,7 @@ class World:
         entity = self.entities[x, y]
         entity.set_entity_hunger(40)
         entity.set_entity_birth(entity.entity_birth_cooldown)
+
     # ENLEVE UNE ENTITE D'UNE CASE
     def clear_entity(self, x, y):
         self.entities[(x, y)] = 0
@@ -159,5 +156,5 @@ class World:
 
     # Conditions to move in water, can t move in coral and be free to eat
     def predator_condition(self, new_x, new_y):
-        return self.inboard((new_x, new_y)) and self.grid[new_x, new_y] != 0 and self.grid[new_x, new_y].case_type != "Coral"
-
+        return self.inboard((new_x, new_y)) and self.grid[new_x, new_y] != 0 and self.grid[
+            new_x, new_y].case_type != "Coral"

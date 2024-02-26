@@ -1,15 +1,17 @@
-import random
-from abc import ABC, abstractmethod
+
+from abc import ABC
 import random
 import math
 
 import world
-import world_cases
+
+
 
 class Entity(ABC):
     """
     Classe abstraite d'entités, utilisée pour créer chaque entité spécifique
     """
+
     def __init__(self) -> None:
         super().__init__()
         self.name = "NONE"
@@ -31,8 +33,7 @@ class Entity(ABC):
         self.temp = (0, 1)  # Perfect temp for creature
         self.prey_set = set("Plankton")
 
-
-    def brain(self, myposition: tuple, entities_position: list, world:world) -> str:
+    def brain(self, myposition: tuple, entities_position: list, world: world) -> str:
         if self.entity_speed_cooldown == 0 and self.entity_speed != -1:
             if self.check_threat(myposition, entities_position, world):
                 print(self.entity_name + " want to flee")
@@ -44,22 +45,27 @@ class Entity(ABC):
                 return "Predation"
             else:
                 # TODO change the number here for self.entity_hunger to change the maximal accepted hunger for birth
-                if  self.birth == 0 and self.entity_hunger <= 40 and self.mate_check(myposition, entities_position, world):
+                if self.birth == 0 and self.entity_hunger <= 40 and self.mate_check(myposition, entities_position,
+                                                                                    world):
                     print(self.entity_name + " want to mate")
                     return "Mate"
                 else:
                     return "Idle"
         else:
             return "Stay"
+
     # check if there is mate that is not myself, same specie , can birth and are close enough to me
     def mate_check(self, myposition, entities_position, world: world):
         entities_matrix = world.entities
         for entity_position in entities_position:
             entity = entities_matrix[entity_position]
-            if entity != self and (entity.entity_name == self.entity_name) and entity.entity_birth == 0 and self.heuristique(myposition,
-                                                                       entity_position) <= self.entity_vision:
+            if entity != self and (
+                    entity.entity_name == self.entity_name) and entity.entity_birth == 0 and self.heuristique(
+                    myposition,
+                    entity_position) <= self.entity_vision:
                 return True
         return False
+
     def eat(self, entity):
         # TODO change value next to * to change the number of hunger entity_type give
         # TODO change value next to + to change the default value of hunger
@@ -73,7 +79,7 @@ class Entity(ABC):
         child_future_position = self.enough_space_around_me(myposition, world)
         if child_future_position != None:
             # starting birth cooldown and add hunger to ourself
-            self.set_entity_hunger(self.entity_hunger+hunger_consummed)
+            self.set_entity_hunger(self.entity_hunger + hunger_consummed)
             self.set_entity_birth(self.entity_birth_cooldown)
             # starting birth cooldown and add hunger to mate
             mate.set_entity_hunger(mate.entity_hunger + hunger_consummed)
@@ -81,15 +87,12 @@ class Entity(ABC):
             # create a baby
             world.set_entity_child(self.entity_name, *child_future_position)
 
-
-
-
     def enough_space_around_me(self, myposition, world):
         for i in range(-1, 1, 1):
-           for j in range(-1, 1, 1):
-               if i != 0 or j != 0:
-                   if world.normal_movement_condition(*(myposition[0] + i, myposition[1] + j)):
-                           return (myposition[0] + i, myposition[1] + j)
+            for j in range(-1, 1, 1):
+                if i != 0 or j != 0:
+                    if world.normal_movement_condition(*(myposition[0] + i, myposition[1] + j)):
+                        return (myposition[0] + i, myposition[1] + j)
         return None
 
     def heuristique(self, position, target_position):
@@ -99,22 +102,22 @@ class Entity(ABC):
         return distance
 
     # Check if there are threat that can i see and that he can nearly see to prevent flee from a threat that can not see me
-    def check_threat(self, myposition, entities_position: list, world:world):
+    def check_threat(self, myposition, entities_position: list, world: world):
         entities_matrix = world.entities
         for entity_position in entities_position:
             entity = entities_matrix[entity_position]
             if (self.entity_name in entity.prey_set) and self.heuristique(myposition,
-                                                                       entity_position) <= min(self.entity_vision, entity.entity_vision+1):
+                                                                          entity_position) <= min(self.entity_vision,
+                                                                                                  entity.entity_vision + 1):
                 return True
         return False
-
 
     def check_prey(self, myposition, entities_position, world):
         entities_matrix = world.entities
         for entity_position in entities_position:
             entity = entities_matrix[entity_position]
             if (entity.entity_name in self.prey_set) and self.heuristique(myposition,
-                                                                       entity_position) <= self.entity_vision:
+                                                                          entity_position) <= self.entity_vision:
                 return True
         return False
 
@@ -215,9 +218,11 @@ class Entity(ABC):
     def set_entity_preys(self, preys: list):
         for i in range(len(preys)):
             self.prey_set.add(preys[i])
+
     @property
     def entity_birth(self):
         return self.birth
+
     def set_entity_birth(self, birth):
         self.birth = birth
 
@@ -227,6 +232,7 @@ class Entity(ABC):
 
     def set_entity_birth_cooldown(self, birth_cooldown):
         self.birth_cooldown = birth_cooldown
+
 
 # CLASSES POUR CHAQUE ENTITE SPECIFIQUE
 class Plankton(Entity):
@@ -248,16 +254,16 @@ class Plankton(Entity):
 
 
 class Crab(Entity):
-    def __init__(self, age=0, hunger=0, max_age=random.randint(3,6)) -> None:
+    def __init__(self, age=0, hunger=0, max_age=random.randint(3, 6)) -> None:
         super().__init__()
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
         self.set_entity_birth(10)
-        self.set_entity_birth_cooldown(10) # not configured yet
-        self.set_entity_max_age(max_age) # not configured yet
-        self.set_entity_speed(0) # not configured yet
-        self.set_entity_vision(0) # not configured yet
+        self.set_entity_birth_cooldown(10)  # not configured yet
+        self.set_entity_max_age(max_age)  # not configured yet
+        self.set_entity_speed(0)  # not configured yet
+        self.set_entity_vision(0)  # not configured yet
 
         self.set_entity_name("Crab")
         self.set_entity_type(1)
@@ -267,11 +273,10 @@ class Crab(Entity):
 
 
 class Medusa(Entity):
-    def __init__(self, age=0, hunger=0,max_age=random.randint(2, 4)) -> None:
+    def __init__(self, age=0, hunger=0, max_age=random.randint(2, 4)) -> None:
         super().__init__()
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
-
 
         self.set_entity_birth(10)
         self.set_entity_birth_cooldown(10)  # not configured yet
@@ -316,11 +321,12 @@ class Fish(Entity):
         # here the nearsea zone are all cases that have a maximal distance of 10 to the sky
         return not world.inboard((check_position[0], check_position[1] - 10)) or world.grid[
             (check_position[0], check_position[1] - 10)] == 0
+
     def nearsea_check(self, myposition, world: world):
         check_position = myposition
         while (world.grid[check_position] != 0):
             # find the nearsea zone above
-            if self.isnearsea(world, check_position):#
+            if self.isnearsea(world, check_position):  #
                 # check if the position found are free
                 if check_position == myposition:
                     return myposition
@@ -331,7 +337,7 @@ class Fish(Entity):
 
 
 class Shark(Entity):
-    def __init__(self, age=0, hunger=0,max_age=random.randint(20, 30)) -> None:
+    def __init__(self, age=0, hunger=0, max_age=random.randint(20, 30)) -> None:
         super().__init__()
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
@@ -356,7 +362,7 @@ class Orca(Entity):
         self.set_entity_hunger(hunger)
 
         self.set_entity_birth(10)
-        self.set_entity_birth_cooldown(10)   # not configured yet
+        self.set_entity_birth_cooldown(10)  # not configured yet
         self.set_entity_max_age(max_age)
         self.set_entity_speed(0)  # not configured yet
         self.set_entity_vision(30)  # not configured yet
