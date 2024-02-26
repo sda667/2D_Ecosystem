@@ -18,6 +18,7 @@ class controller():
     def move(self, entity, start, end):
         self.world.entities[end] = entity
         self.world.clear_entity(*start)
+        entity.set_entity_hunger(entity.entity_hunger + 0.5)
         entity.set_entity_speed_cooldown(entity.entity_speed)
 
     def entity_positions_list_update(self, entity_positions, old_position, new_position):
@@ -142,8 +143,8 @@ class controller():
     # UPDATE THE ATTRIBUTS OF A ENTITY AT (X, Y)
     def __status_update(self, x, y, entity_positions):
         entity = self.world.entities[(x, y)]
-        entity.set_entity_hunger(entity.entity_hunger + 0.3)
         entity.set_entity_age(entity.entity_age + 0.1)
+        entity.set_entity_hunger(entity.entity_hunger + 0.1)
         if isinstance(entity, world.Fish) and entity.entity_hunger > 0:
             hunger_recover =  min(self.world.plankton, entity.entity_hunger)
             entity.set_entity_hunger(entity.entity_hunger-hunger_recover)
