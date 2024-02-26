@@ -46,7 +46,7 @@ class controller():
             new_x, new_y = x + dx, y + dy
 
         # Déplacement d'entité
-        if self.world.normal_movement_condition(new_x, new_y) and entity.entity_hunger < 70:
+        if self.world.normal_movement_condition(new_x, new_y):
             self.move(entity, (x, y), (new_x, new_y))
             self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
             entity.set_last_movement(dx, dy)
