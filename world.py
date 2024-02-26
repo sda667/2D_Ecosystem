@@ -19,10 +19,10 @@ class World:
         self.sun = True # is the sun present.
         self.plankton = 0 # 0 if the sun is not present and 0 < plankton <= 1 if the sun is present
         self.shark_existence = (5, 15)
-        self.fish_existence = (100, 150)
+        self.fish_existence = (50, 100)
         self.plankton_existence = (250, 300)
-        self.medusa_existence = (40, 60)
-        self.orcas_existence = (5, 10)
+        self.medusa_existence = (20, 40)
+        self.orcas_existence = (5, 15)
         self.crab_existence = (20, 30)
         self.temperature = 20
 
@@ -79,6 +79,11 @@ class World:
             for j in range(self.j_size):
                 self.set_case(j, i, world_matrix[i][j])
         self.create_entities(foreground)
+
+    def generate_entities(self, entities_file):
+        file = open(entities_file, 'w')
+
+
 
     # POSE UNE ENTITE SUR UNE CASE
     def set_entity(self, name, x, y):

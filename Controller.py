@@ -1,7 +1,7 @@
 import math
 import random
 from priority_queue import PriorityQueue  # USING priority queue used in project 311
-
+import world
 # MOUVEMENTS POSSIBLES (ENUM?)
 RIGHT = 0
 LEFT = 1
@@ -142,13 +142,13 @@ class controller():
     # UPDATE THE ATTRIBUTS OF A ENTITY AT (X, Y)
     def __status_update(self, x, y, entity_positions):
         entity = self.world.entities[(x, y)]
-        entity.set_entity_hunger(entity.entity_hunger + 1)
-        entity.set_entity_age(entity.entity_age + 1)
-        if entity.entity_name == "Fish" and entity.entity_hunger > 0:
+        entity.set_entity_hunger(entity.entity_hunger + 0.3)
+        entity.set_entity_age(entity.entity_age + 0.1)
+        if isinstance(entity, world.Fish) and entity.entity_hunger > 0:
             hunger_recover =  min(self.world.plankton, entity.entity_hunger)
             entity.set_entity_hunger(entity.entity_hunger-hunger_recover)
         if entity.entity_birth > 0:
-            entity.set_entity_birth(entity.entity_birth-1)
+            entity.set_entity_birth(max(entity.entity_birth-1,0)) # to prevent having a negatif value
         if entity.entity_hunger >= 100 or entity.entity_age >= entity.entity_life_span[
             1]:
             self.world.clear_entity(x, y)
@@ -181,7 +181,6 @@ class controller():
                 distance = self.heuristique((x, y), mate)
                 closest_mate = mate
         target_position = closest_mate
-        print(myself.entity_name + f" approching position {target_position}")
         actions = self.astar((x, y), target_position)
         if actions == None:
             return

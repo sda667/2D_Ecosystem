@@ -1,7 +1,7 @@
-Fish 30 30
-Fish 40 40
-Fish 33 33
-Fish 40 41
-Fish 33 34
-Shark 25 25 
-Shark 27 25 
+Shark 23 23
+Fish 24 24
+Shark 0 59
+Fish 10 24
+Crab 40 31
+Orca 20 20
+Medusa 10 50
