@@ -144,7 +144,7 @@ class controller():
         entity = self.world.entities[(x, y)]
         entity.set_entity_hunger(entity.entity_hunger + 0.3)
         entity.set_entity_age(entity.entity_age + 0.1)
-        if isinstance(entity, world.Fish) and entity.entity_hunger > 0:
+        if isinstance(entity, world.Fish) and entity.entity_hunger > 30:
             hunger_recover =  min(self.world.plankton, entity.entity_hunger)
             entity.set_entity_hunger(entity.entity_hunger-hunger_recover)
         if entity.entity_birth > 0:
@@ -182,7 +182,7 @@ class controller():
                 closest_mate = mate
         target_position = closest_mate
         actions = self.astar((x, y), target_position)
-        if actions == None:
+        if actions is None:
             return
         if len(actions) != 0:
             action = actions[0]
