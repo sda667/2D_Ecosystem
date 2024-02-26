@@ -90,7 +90,7 @@ class World:
         if self.grid[(x, y)] != 0 and self.grid[(x, y)].name != "Coral":
             if name == "Shark":
                 self.entities[x, y] = Shark()
-            elif name == "Fish":
+            elif name == "Fish" or name == "Fish0" or name == "Fish1" or name == "Fish2":
                 self.entities[x, y] = Fish()
             elif name == "Crab":
                 self.entities[x, y] = Crab()

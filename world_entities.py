@@ -3,7 +3,8 @@ from abc import ABC, abstractmethod
 import random
 import math
 
-
+import world
+import world_cases
 
 class Entity(ABC):
     """
@@ -31,17 +32,19 @@ class Entity(ABC):
         self.prey_set = set("Plankton")
 
 
-    def brain(self, myposition: tuple, entities_position: list, entities_matrix) -> str:
+    def brain(self, myposition: tuple, entities_position: list, world:world) -> str:
         if self.entity_speed_cooldown == 0 and self.entity_speed != -1:
-            if self.check_threat(myposition, entities_position, entities_matrix):
+            if self.check_threat(myposition, entities_position, world):
                 print(self.entity_name + " want to flee")
                 return "Flee"
+            # TODO change the number here to change the minimal hunger for predation
             elif (self.entity_hunger >= 50) and (
-                    self.check_prey(myposition, entities_position, entities_matrix)):
+                    self.check_prey(myposition, entities_position, world)):
                 print(self.entity_name + " want to eat")
                 return "Predation"
             else:
-                if  self.birth == 0 and self.entity_hunger <= 40 and self.mate_check(myposition, entities_position, entities_matrix):
+                # TODO change the number here for self.entity_hunger to change the maximal accepted hunger for birth
+                if  self.birth == 0 and self.entity_hunger <= 40 and self.mate_check(myposition, entities_position, world):
                     print(self.entity_name + " want to mate")
                     return "Mate"
                 else:
@@ -49,7 +52,8 @@ class Entity(ABC):
         else:
             return "Stay"
     # check if there is mate that is not myself, same specie , can birth and are close enough to me
-    def mate_check(self, myposition, entities_position, entities_matrix):
+    def mate_check(self, myposition, entities_position, world: world):
+        entities_matrix = world.entities
         for entity_position in entities_position:
             entity = entities_matrix[entity_position]
             if entity != self and (entity.entity_name == self.entity_name) and entity.entity_birth == 0 and self.heuristique(myposition,
@@ -57,17 +61,24 @@ class Entity(ABC):
                 return True
         return False
     def eat(self, entity):
+        # TODO change value next to * to change the number of hunger entity_type give
+        # TODO change value next to + to change the default value of hunger
         value = entity.entity_type * 20 + 10
         hunger = self.entity_hunger
         self.set_entity_hunger(hunger - min(hunger, value))
 
     def mate(self, myposition, mate: "Entity", world):
+        # TODO change value for hunger_consumned to change the amount added to hunger to the ourself and mate
         hunger_consummed = 30
         child_future_position = self.enough_space_around_me(myposition, world)
         if child_future_position != None:
+            # starting birth cooldown and add hunger to ourself
             self.set_entity_hunger(self.entity_hunger+hunger_consummed)
             self.set_entity_birth(self.entity_birth_cooldown)
+            # starting birth cooldown and add hunger to mate
+            mate.set_entity_hunger(mate.entity_hunger + hunger_consummed)
             mate.set_entity_birth(mate.entity_birth_cooldown)
+            # create a baby
             world.set_entity_child(self.entity_name, *child_future_position)
 
 
@@ -88,7 +99,8 @@ class Entity(ABC):
         return distance
 
     # Check if there are threat that can i see and that he can nearly see to prevent flee from a threat that can not see me
-    def check_threat(self, myposition, entities_position: list, entities_matrix):
+    def check_threat(self, myposition, entities_position: list, world:world):
+        entities_matrix = world.entities
         for entity_position in entities_position:
             entity = entities_matrix[entity_position]
             if (self.entity_name in entity.prey_set) and self.heuristique(myposition,
@@ -97,7 +109,8 @@ class Entity(ABC):
         return False
 
 
-    def check_prey(self, myposition, entities_position, entities_matrix):
+    def check_prey(self, myposition, entities_position, world):
+        entities_matrix = world.entities
         for entity_position in entities_position:
             entity = entities_matrix[entity_position]
             if (entity.entity_name in self.prey_set) and self.heuristique(myposition,
@@ -290,6 +303,31 @@ class Fish(Entity):
         self.set_entity_zone(("Near Beach", "Mid Ocean"))
         self.set_entity_depth(("Surface Sea", "Sea"))
         self.set_entity_preys(["Plankton"])
+
+    def check_prey(self, myposition, entities_position, world):
+        if world.plankton != 0 and self.nearsea_check(myposition, world) != myposition:
+            return True
+        return False
+
+    # Find the nearest place for Fish to eat plankton
+    def isnearsea(self, world, check_position):
+        # TODO change the value next to check_position[1] to check the definition of nearsea zone
+        # nearsea zone is actually the cases that are near to sky , distance to be considered as near is defined below
+        # here the nearsea zone are all cases that have a maximal distance of 10 to the sky
+        return not world.inboard((check_position[0], check_position[1] - 10)) or world.grid[
+            (check_position[0], check_position[1] - 10)] == 0
+    def nearsea_check(self, myposition, world: world):
+        check_position = myposition
+        while (world.grid[check_position] != 0):
+            # find the nearsea zone above
+            if self.isnearsea(world, check_position):#
+                # check if the position found are free
+                if check_position == myposition:
+                    return myposition
+                if world.normal_movement_condition(*check_position):
+                    return check_position
+            check_position = (check_position[0], check_position[1] - 1)
+        return None
 
 
 class Shark(Entity):

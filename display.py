@@ -74,7 +74,6 @@ class GridDisplay:
                 if self.world.entities[i, j]:
                     entity = self.world.entities[i, j]
                     entity_type = entity.entity_name
-                    print(entity_type)
                     entity_image = self.entities.get(entity_type)
                     flipped = pg.transform.flip(entity_image, True, False)
                     # Check if the entity moved to the right

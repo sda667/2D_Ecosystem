@@ -26,6 +26,7 @@ def main(cell_size=15, x_size = 60, y_size=120) -> None:
     # Boucle d'action du monde (plus besoin de toucher à l'affichage)
     while True:
         plankton_update_timer+=1
+        # TODO change the value to change the time each turn take
         time.sleep(0.2)
         controleur.update_entities()
         if plankton_update_timer%10 == 0 :

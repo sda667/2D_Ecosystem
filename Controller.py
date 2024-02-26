@@ -46,7 +46,7 @@ class controller():
             new_x, new_y = x + dx, y + dy
 
         # Déplacement d'entité
-        if self.world.normal_movement_condition(new_x, new_y):
+        if self.world.normal_movement_condition(new_x, new_y) and entity.entity_hunger < 70:
             self.move(entity, (x, y), (new_x, new_y))
             self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
             entity.set_last_movement(dx, dy)
@@ -54,23 +54,28 @@ class controller():
     # DEPLACEMENT D'UN PREDATEUR (CHASSE, SE DEPLACE VERS LA PROIE LA PLUS PROCHE, S'IL Y EN A UNE A PORTEE)
     def __predator_update(self, x, y, entity_positions):
         myself = self.world.entities[(x, y)]
-        preys = []
-        # Liste des proies possibles
-        for entity_position in entity_positions:
-            if entity_position != (x, y):
-                entity = self.world.entities[entity_position]
-                if entity.entity_name in myself.prey_set:
-                    preys.append(entity_position)
-
-        # Détermine le prédateur le plus proche
         closest_prey = None
-        distance = math.inf
-        for prey in preys:
-            if self.heuristique((x, y), prey) < distance:
-                distance = self.heuristique((x, y), prey)
-                closest_prey = prey
-
+        if isinstance(myself, world.Fish):
+            closest_prey = myself.nearsea_check((x, y), self.world)
+            if closest_prey == None:
+                # if there is not any nearsea zone free above us , we move to left or right
+               closest_prey = random.choices([(x-1, y), (x+1, y)], [0.5, 0.5])[0]
+        else:
+            preys = []
+            # Liste des proies possibles
+            for entity_position in entity_positions:
+                if entity_position != (x, y):
+                    entity = self.world.entities[entity_position]
+                    if entity.entity_name in myself.prey_set:
+                        preys.append(entity_position)
+            # Détermine le prédateur le plus proche
+            distance = math.inf
+            for prey in preys:
+                if self.heuristique((x, y), prey) < distance:
+                    distance = self.heuristique((x, y), prey)
+                    closest_prey = prey
         # Chemin optimisé vers la proie
+
         actions = self.astar((x, y), closest_prey)
         if len(actions) != 0:
             action = actions[0]
@@ -78,7 +83,7 @@ class controller():
             new_x, new_y = x + dx, y + dy
             entity = self.world.entities[(x, y)]
             if self.world.predator_condition(new_x, new_y):
-                if ((new_x, new_y) == closest_prey):
+                if ((new_x, new_y) == closest_prey) and self.world.entities[closest_prey]:
                     entity.eat(self.world.entities[closest_prey])
                     entity_positions.remove((x, y))
                 self.move(entity, (x, y), (new_x, new_y))
@@ -127,7 +132,7 @@ class controller():
     def __update_entity(self, x, y, entity_positions):
         entity = self.world.entities[(x, y)]
         # not implemented yet , the entity think about what to do
-        Action = entity.brain((x, y), entity_positions, self.world.entities)
+        Action = entity.brain((x, y), entity_positions, self.world)
         if Action == "Idle":
             self.__idle_update(x, y, entity_positions)
         elif Action == "Predation":
@@ -143,9 +148,13 @@ class controller():
     # UPDATE THE ATTRIBUTS OF A ENTITY AT (X, Y)
     def __status_update(self, x, y, entity_positions):
         entity = self.world.entities[(x, y)]
+        # TODO change the value next to entity.entity_age to modify the aging of each entities/ turn
         entity.set_entity_age(entity.entity_age + 0.1)
+        # TODO change the value next to entity.entity_age to modify the evolution of hunger  of each entities/ turn
         entity.set_entity_hunger(entity.entity_hunger + 0.1)
-        if isinstance(entity, world.Fish) and entity.entity_hunger > 0:
+        # for fish only, if fish is a fish, fish can eat and fish is in nearsea zone then it feed itself
+        # TODO change the value for entity.entity_hunger to set the maximal value for hunger that fish can reach by eating plankton
+        if (isinstance(entity, world.Fish) and entity.entity_hunger > 0 and entity.isnearsea(self.world, (x, y))):
             hunger_recover =  min(self.world.plankton, entity.entity_hunger)
             entity.set_entity_hunger(entity.entity_hunger-hunger_recover)
         if entity.entity_birth > 0:
@@ -183,7 +192,7 @@ class controller():
                 closest_mate = mate
         target_position = closest_mate
         actions = self.astar((x, y), target_position)
-        if actions == None:
+        if actions is None:
             return
         if len(actions) != 0:
             action = actions[0]
