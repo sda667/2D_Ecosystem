@@ -1,3 +1,5 @@
+import random
+
 import pygame as pg
 import numpy as np
 import json
@@ -72,6 +74,7 @@ class GridDisplay:
                 if self.world.entities[i, j]:
                     entity = self.world.entities[i, j]
                     entity_type = entity.entity_name
+                    print(entity_type)
                     entity_image = self.entities.get(entity_type)
                     flipped = pg.transform.flip(entity_image, True, False)
                     # Check if the entity moved to the right
@@ -80,12 +83,13 @@ class GridDisplay:
                     else:
                         image = entity_image
                     # Redimensionnement de l'image
-                    resized_image = pg.transform.scale(image, (self.cell_size * 3, self.cell_size * 3))
+                    #resized_image = pg.transform.scale(image, (self.cell_size * 3, self.cell_size * 3))
                     # MOn enlève le blanc autour de l'image
-                    resized_image.set_colorkey((255, 255, 255))
+                    #resized_image.set_colorkey((255, 255, 255))
+                    image.set_colorkey((255, 255, 255))
                     # Affichage de l'image
                     cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
-                    self.screen.blit(resized_image, cell_rect)
+                    self.screen.blit(image, cell_rect)
 
                     # Affichage de la barre de faim
                     hunger_bar_width = self.cell_size * 3

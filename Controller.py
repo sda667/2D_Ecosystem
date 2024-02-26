@@ -142,8 +142,8 @@ class controller():
     # UPDATE THE ATTRIBUTS OF A ENTITY AT (X, Y)
     def __status_update(self, x, y, entity_positions):
         entity = self.world.entities[(x, y)]
-        entity.set_entity_hunger(entity.entity_hunger + 1)
-        entity.set_entity_age(entity.entity_age + 1)
+        entity.set_entity_hunger(entity.entity_hunger + 0.3)
+        entity.set_entity_age(entity.entity_age + 0.1)
         if entity.entity_birth > 0:
             entity.set_entity_birth(entity.entity_birth-1)
         if entity.entity_hunger >= 100 or entity.entity_age >= entity.entity_life_span[

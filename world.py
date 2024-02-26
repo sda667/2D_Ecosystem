@@ -17,10 +17,10 @@ class World:
         self.i_size, self.j_size = x_size, y_size
         self.entities = np.zeros_like(grid_x, dtype=Entity)
         self.shark_existence = (5, 15)
-        self.fish_existence = (100, 150)
+        self.fish_existence = (50, 100)
         self.plankton_existence = (250, 300)
-        self.medusa_existence = (40, 60)
-        self.orcas_existence = (5, 10)
+        self.medusa_existence = (20, 40)
+        self.orcas_existence = (5, 15)
         self.crab_existence = (20, 30)
         self.temperature = 20
 
@@ -78,6 +78,11 @@ class World:
                 self.set_case(j, i, world_matrix[i][j])
         self.create_entities(foreground)
 
+    def generate_entities(self, entities_file):
+        file = open(entities_file, 'w')
+
+
+
     # POSE UNE ENTITE SUR UNE CASE
     def set_entity(self, name, x, y):
         if self.grid[(x, y)] != 0 and self.grid[(x, y)].name != "Coral":
@@ -96,7 +101,7 @@ class World:
 
     def set_entity_child(self, name, x, y):
         self.set_entity(name, x, y)
-        self.entities[x, y].entity_hunger = 50
+        #self.entities[x, y].entity_hunger = 50
     # ENLEVE UNE ENTITE D'UNE CASE
     def clear_entity(self, x, y):
         self.entities[(x, y)] = 0
