@@ -246,8 +246,7 @@ class Controller:
             if self.world.predator_condition(*target_position):
                 if possible_actions[direction] == target_position:
                     return [(possible_actions[direction], direction)]
-                if self.world.predator_condition(*possible_actions[direction]) and self.world.entities[
-                    possible_actions[direction]] == 0:
+                if self.world.normal_movement_condition(*possible_actions[direction]):
                     real_possible_actions.append((possible_actions[direction], direction))
         return real_possible_actions
 
