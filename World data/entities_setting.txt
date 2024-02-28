@@ -1,5 +1,5 @@
-Shark 5 15 20 30
-Orca 5 10 50 90
-Fish 40 80 5 8
-Crab 20 30 3 6
-Medusa 10 20 2 4
+Shark 5 7 20 30
+Orca 2 3 50 90
+Fish 10 20 5 8
+Crab 5 10 3 6
+Medusa 2 4 2 4

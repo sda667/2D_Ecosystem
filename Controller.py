@@ -230,7 +230,7 @@ class Controller:
                 stack.push((next_position, actions + [action], Greedy + 1),
                            Greedy + 1 + self.heuristique(next_position, target_position))
                 marked_state.add(next_position)
-        return None
+        return []
 
     def heuristique(self, position, target_position):
         x_distance = abs(target_position[0] - position[0])
