@@ -62,6 +62,8 @@ class World:
             self.grid[(x, y)] = CaseCoral()
         elif type == "D":
             self.grid[(x, y)] = DeepSea()
+        elif type == "L":
+            self.grid[(x, y)] = Land()
         elif type == ".":
             pass
 
@@ -96,15 +98,25 @@ class World:
 
         line_values = ['.'] * sky_layers + ['S'] * surfacesea_layers + ['M'] * sea_layers + ['D'] * deepsea_layers
         world_matrix = [[value] * self.j_size for value in line_values]
-
+        self.generate_random_floor(world_matrix)
         for i in range(self.i_size):
             for j in range(self.j_size):
                 self.set_case(j, i, world_matrix[i][j])
         self.create_entities(foreground)
+    # RANDOM GENERATE FLOOR
+    def generate_random_floor(self, world_matrix):
+        # longueur des cotes donc partie de terre a la surface de la mer jusqu au point minimal que
+        cote_length = random.randint(5, 10)
+        height_floor = random.randint(5, 15)
+        for i in range(self.i_size-1,self.i_size-1-height_floor, -1):
+            world_matrix[i] = ["L"] * self.j_size
+
+
+
 
     # POSE UNE ENTITE SUR UNE CASE
     def set_init_entity(self, name, x, y, age, hunger, max_age):
-        if self.grid[(x, y)] != 0 and self.grid[(x, y)].name != "Coral":
+        if self.isplayable_and_free(x, y):
             if name == "Shark":
                 self.entities[x, y] = Shark(age, hunger, max_age)
             elif name == "Fish" or name == "Fish0" or name == "Fish1" or name == "Fish2":
@@ -151,10 +163,11 @@ class World:
             return False
 
     # condition to move in water, cant move in coral and cant not eat or crush another entities
-    def normal_movement_condition(self, new_x, new_y):
-        return self.predator_condition(new_x, new_y) and self.entities[new_x, new_y] == 0
+    def isplayable_and_free(self, new_x, new_y):
+        return self.isplayable_case(new_x, new_y) and self.entities[new_x, new_y] == 0
 
     # Conditions to move in water, can t move in coral and be free to eat
-    def predator_condition(self, new_x, new_y):
+    def isplayable_case(self, new_x, new_y):
         return self.inboard((new_x, new_y)) and self.grid[new_x, new_y] != 0 and self.grid[
-            new_x, new_y].case_type != "Coral"
+            new_x, new_y].case_type != "Coral" and self.grid[
+            new_x, new_y].case_type != "Land"

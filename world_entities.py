@@ -91,7 +91,7 @@ class Entity(ABC):
         for i in range(-1, 1, 1):
             for j in range(-1, 1, 1):
                 if i != 0 or j != 0:
-                    if world.normal_movement_condition(*(myposition[0] + i, myposition[1] + j)):
+                    if world.isplayable_and_free(*(myposition[0] + i, myposition[1] + j)):
                         return (myposition[0] + i, myposition[1] + j)
         return None
 
@@ -330,7 +330,7 @@ class Fish(Entity):
                 # check if the position found are free
                 if check_position == myposition:
                     return myposition
-                if world.normal_movement_condition(*check_position):
+                if world.isplayable_and_free(*check_position):
                     return check_position
             check_position = (check_position[0], check_position[1] - 1)
         return None

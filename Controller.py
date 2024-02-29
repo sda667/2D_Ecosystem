@@ -11,8 +11,8 @@ DOWN = 3
 
 
 class Controller:
-    def __init__(self, world):
-        self.world = world
+    def __init__(self, world: world):
+        self.world: world = world
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
     # DEPLACEMENT IDLE D'UNE ENTITE (STOCHASTIQUE, MARCHE ALEATOIRE A MEMOIRE)
@@ -47,7 +47,7 @@ class Controller:
             new_x, new_y = x + dx, y + dy
 
         # Déplacement d'entité
-        if self.world.normal_movement_condition(new_x, new_y):
+        if self.world.isplayable_and_free(new_x, new_y):
             self.move(entity, (x, y), (new_x, new_y))
             self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
             entity.set_last_movement(dx, dy)
@@ -83,7 +83,7 @@ class Controller:
             dx, dy = self.directions[action]
             new_x, new_y = x + dx, y + dy
             entity = self.world.entities[(x, y)]
-            if self.world.predator_condition(new_x, new_y):
+            if self.world.isplayable_case(new_x, new_y):
                 if ((new_x, new_y) == closest_prey) and self.world.entities[closest_prey]:
                     entity.eat(self.world.entities[closest_prey])
                     entity_positions.remove((x, y))
@@ -115,14 +115,14 @@ class Controller:
         dx = closest_enemy[0] - x
         dy = closest_enemy[1] - y
         target_position = (x - dx, y - dy)
-        if self.world.predator_condition(*target_position):
+        if self.world.isplayable_case(*target_position):
             actions = self.astar((x, y), target_position)
             if len(actions) != 0:
                 action = actions[0]
                 dx, dy = self.directions[action]
                 new_x, new_y = x + dx, y + dy
                 entity = self.world.entities[(x, y)]
-                if self.world.normal_movement_condition(new_x, new_y):
+                if self.world.isplayable_and_free(new_x, new_y):
                     self.move(entity, (x, y), (new_x, new_y))
                     self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
                     entity.set_last_movement(dx, dy)
@@ -193,7 +193,7 @@ class Controller:
             entity = self.world.entities[(x, y)]
             if (new_x, new_y) == closest_mate:
                 entity.mate((x, y), self.world.entities[closest_mate], self.world)
-            if self.world.normal_movement_condition(new_x, new_y):
+            if self.world.isplayable_and_free(new_x, new_y):
                 self.move(entity, (x, y), (new_x, new_y))
                 self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
                 entity.set_last_movement(dx, dy)
@@ -243,10 +243,10 @@ class Controller:
                             LEFT: (position[0] - 1, position[1]), RIGHT: (position[0] + 1, position[1])}
         real_possible_actions = []
         for direction in possible_actions:
-            if self.world.predator_condition(*target_position):
+            if self.world.isplayable_case(*target_position):
                 if possible_actions[direction] == target_position:
                     return [(possible_actions[direction], direction)]
-                if self.world.normal_movement_condition(*possible_actions[direction]):
+                if self.world.isplayable_and_free(*possible_actions[direction]):
                     real_possible_actions.append((possible_actions[direction], direction))
         return real_possible_actions
 
