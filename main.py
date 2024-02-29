@@ -5,10 +5,10 @@ import time
 
 from Controller import Controller
 import random
-
+import time
 
 # MAIN TEST
-def main(cell_size=15, x_size=60, y_size=120, seed=random.randint(0, 999)) -> None:
+def main(cell_size=15, x_size=60, y_size=120, seed=time.time()) -> None:
     # Taille de la fenêtre
     screen_size = (y_size * cell_size, x_size * cell_size)
     # Initialisation du monde
@@ -36,4 +36,4 @@ def main(cell_size=15, x_size=60, y_size=120, seed=random.randint(0, 999)) -> No
 
 
 if __name__ == "__main__":
-    main(seed=123)
+    main()

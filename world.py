@@ -106,10 +106,43 @@ class World:
     # RANDOM GENERATE FLOOR
     def generate_random_floor(self, world_matrix):
         # longueur des cotes donc partie de terre a la surface de la mer jusqu au point minimal que
-        cote_length = random.randint(5, 10)
+        cote_left_length = random.randint(3, 10)
+        cote_down_height = random.randint(cote_left_length, cote_left_length+10)
         height_floor = random.randint(5, 15)
+        # make horizontal floor
         for i in range(self.i_size-1,self.i_size-1-height_floor, -1):
             world_matrix[i] = ["L"] * self.j_size
+        # make vertical left floor
+        for i in range(self.i_size):
+            if world_matrix[i][0] != "L":
+                for j in range(0, cote_left_length, 1):
+                    world_matrix[i][j] = "L"
+        # make vertical right floor
+        for i in range(self.i_size):
+            if world_matrix[i][self.j_size-1] != "L":
+                for j in range(self.j_size-1, self.j_size-1 - cote_left_length, -1):
+                    world_matrix[i][j] = "L"
+        # creation de la pente
+        for i in range(0, self.i_size-1-height_floor):
+            point = self.interpolate_points(self.i_size-1-i, cote_left_length, self.i_size - 1, cote_down_height, height_floor)
+            for j in range(1, int(point) - cote_left_length+1):
+                world_matrix[i][cote_left_length-1+j] = "L"
+                world_matrix[i][self.j_size - cote_left_length -j] = "L"
+
+    def interpolate_points(self, y, x1, y1, x2, y2):
+        """
+        Interpolation linéaire entre deux points.
+
+        Arguments :
+        x : float - La valeur de X pour laquelle nous voulons trouver Y.
+        x1, y1 : float - Les coordonnées du premier point.
+        x2, y2 : float - Les coordonnées du deuxième point.
+
+        Returns :
+        float - La valeur de Y interpolée pour la valeur de X donnée.
+        """
+        value = x1 + (y - y1) * (x2 - x1) / (y2 - y1)
+        return value
 
 
 
