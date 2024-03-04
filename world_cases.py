@@ -19,7 +19,10 @@ class SurfaceSea(Case):
     def __init__(self) -> None:
         super().__init__()
         self.name = "Surface Sea"
-
+class Sun(Case):
+    def __init__(self) -> None:
+        super().__init__()
+        self.name = "Sun"
 
 class CaseSea(Case):
     def __init__(self) -> None:

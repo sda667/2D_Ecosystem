@@ -12,5 +12,13 @@ class ControllerUI:
         elif event_key == pg.K_z:
             print("temperature +1 ")
             self.world.temperature += 1
+        if event_key == pg.K_w:
+            if self.world.light != 1:
+                print("light -1 ")
+                self.world.light -= 1
+        elif event_key == pg.K_x:
+            if self.world.light != 10:
+                print("light +1 ")
+                self.world.light += 1
         else:
             pass

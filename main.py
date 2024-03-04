@@ -1,12 +1,12 @@
+import queue
+
+import pygame.event
+
 from display import GridDisplay
-import sys
 from world import *
-import time
-
 from Controller import Controller
-import random
 import time
-
+import threading
 # MAIN TEST
 def main(cell_size=15, x_size=60, y_size=120, seed=time.time()) -> None:
     # Taille de la fenêtre
@@ -16,23 +16,25 @@ def main(cell_size=15, x_size=60, y_size=120, seed=time.time()) -> None:
 
     generate_entities("World data/entities.txt")
     monde.generate_world("World data/entities.txt")
-
+    event_queue = queue.Queue()
     grid_display = GridDisplay(monde, cell_size=cell_size, screen_size=screen_size)  # Taille d'une case en pixels
-    grid_display.run()
-
+    thread = threading.Thread(target=grid_display.start_display, args=(event_queue,), daemon=True)
+    thread.start()
     # Initialisation du contrôleur
 
     controleur = Controller(monde)
     plankton_update_timer = 0
-    # Boucle d'action du monde (plus besoin de toucher à l'affichage)
     while True:
+        for event in pygame.event.get():
+            event_queue.put(event)
         plankton_update_timer += 1
         # TODO change the value to change the time each turn take
         time.sleep(0.2)
         controleur.update_entities()
-        if plankton_update_timer % 10 == 0:
-            plankton_update_timer %= 10
-            controleur.plankton_update()
+        controleur.plankton_update()
+        if not thread.is_alive():
+            pygame.quit()
+            exit()
 
 
 if __name__ == "__main__":

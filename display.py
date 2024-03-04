@@ -1,14 +1,7 @@
-import random
-
 import pygame as pg
-import numpy as np
 import json
 from world import *
-import time
-import threading
-import sys
 from controller_ui import ControllerUI
-
 
 class GridDisplay:
     """
@@ -122,16 +115,21 @@ class GridDisplay:
         temperature_rect = temperature_text.get_rect(topleft=(50, 100))
         self.screen.blit(temperature_text,
                          temperature_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
+        temperature_text = font.render(f"Light: {self.world.light},        <-W   X->", True, (0, 0, 0))
+        temperature_rect = temperature_text.get_rect(topleft=(50, 125))
+        self.screen.blit(temperature_text,
+                         temperature_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
 
-        pg.display.flip()
 
     # AFFICHER LA GRILLE EN BOUCLE
-    def __start_display(self) -> None:
+    def start_display(self, event_queue) -> None:
         controllerUI = ControllerUI(self.world)
         mainloop = True
         running = True
         while running:
-            for event in pg.event.get():
+            while not event_queue.empty():
+                # If the queue is not empty, get the event
+                event = event_queue.get()
                 if event.type == pg.QUIT:
                     running = False
                 elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
@@ -145,13 +143,9 @@ class GridDisplay:
             if mainloop:
                 self.__draw_grid()
                 self.__draw_entities()
+                pg.display.flip()
                 self.clock.tick(5)  # 10 FPS
             else:
                 self.__draw_ui()
+                pg.display.flip()
                 self.clock.tick(10)  # 10 FPS
-        pg.quit()
-
-    # LANCER L'AFFICHAGE DANS UN THREAD (METHODE A APPELER DANS LE MAIN)
-    def run(self) -> None:
-        thread = threading.Thread(target=self.__start_display, daemon=True)
-        thread.start()

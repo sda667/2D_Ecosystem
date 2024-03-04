@@ -251,7 +251,9 @@ class Controller:
         return real_possible_actions
 
     def plankton_update(self):
+
         if self.world.sun:
-            self.world.plankton = random.choices([0.5, 1, 2, 4], [0.2, 0.5, 0.2, 0.1])[0]
+            # TODO light to plankton
+            self.world.plankton = self.world.light*0.1
         else:
             self.world.plankton = 0

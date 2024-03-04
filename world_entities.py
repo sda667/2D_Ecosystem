@@ -36,18 +36,15 @@ class Entity(ABC):
     def brain(self, myposition: tuple, entities_position: list, world: world) -> str:
         if self.entity_speed_cooldown == 0 and self.entity_speed != -1:
             if self.check_threat(myposition, entities_position, world):
-                print(self.entity_name + " want to flee")
                 return "Flee"
             # TODO change the number here to change the minimal hunger for predation
             elif (self.entity_hunger >= 50) and (
                     self.check_prey(myposition, entities_position, world)):
-                print(self.entity_name + " want to eat")
                 return "Predation"
             else:
                 # TODO change the number here for self.entity_hunger to change the maximal accepted hunger for birth
                 if self.birth == 0 and self.entity_hunger <= 40 and self.mate_check(myposition, entities_position,
                                                                                     world):
-                    print(self.entity_name + " want to mate")
                     return "Mate"
                 else:
                     return "Idle"

@@ -7,7 +7,8 @@
         "Land": "image/Coral.jpg",
         "Fishing Area": "image/Sea.jpg",
         "Coral": "image/Coral.jpg",
-        "Volcano": "image/Coral.jpg"
+        "Volcano": "image/Coral.jpg",
+        "Sun": "image/Sun.jpg"
     },
     "EntityPath": {
         "Crab": "image/crab2.png",
