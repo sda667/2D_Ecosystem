@@ -32,85 +32,90 @@ class GridDisplay:
             tiles[tile_type] = pg.image.load(path).convert()
         return tiles
 
+    # CHARGER LES CHEMINS DES IMAGES DES ENTITES (DEPUIS LA CONFIGURATION)
     def __load_entities(self) -> None:
         entities = {}
         for entity_type, path in self.config["EntityPath"].items():
             entities[entity_type] = pg.image.load(path).convert_alpha()
         return entities
-
-    # AFFICHER LA GRILLE
-    def __draw_grid(self) -> None:
-        # Variable pour la profondeur
-        depth = 0
-        # Couleur de fond
-
-        background_image = pg.image.load("image/Ocean.png").convert()
-        resized_image = pg.transform.scale(background_image,
-                                           (self.screen_size[0] // 5, self.screen_size[1] // 5))  # Resize the image
-        # Répéter l'image en boucle sur le haut de l'écran
-        for x in range(0, self.screen_size[0], resized_image.get_width()):
-            self.screen.blit(resized_image, (x, 0))
-        self.screen.blit(resized_image, (0, 0))  # Position the image at the top
-        # Affichage des cases
+    
+    # AFFICHER LES CASES
+    def __draw_tiles(self):
         for i in range(self.world.grid.shape[0]):
             for j in range(self.world.grid.shape[1]):
                 if self.world.grid[i, j] != 0:
-
                     # Calcul de l'opacité en fonction de la profondeur
                     depth = j / self.world.grid.shape[1]
                     opacity = int(255 - (depth * 255))  # Calcul de l'opacité en fonction de la profondeur
                     opacity = max(0, min(255, opacity))
 
-                    # Récupération de l'image de la case
+                    # Récupération de l'image de la case (et redimensionnement, opacité)
                     tile_type = self.world.grid[i, j].case_type
                     tile_image = self.tiles.get(tile_type)
-                    # Redimensionnement de l'image
                     resized_image = pg.transform.scale(tile_image, (self.cell_size, self.cell_size))
-
-                    # Mise en place de l'opacité
                     resized_image.set_alpha(opacity)
 
                     # Affichage de l'image
                     cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
                     self.screen.blit(resized_image, cell_rect)
 
+    # AFFICHER LA GRILLE
+    def __draw_grid(self) -> None:
+        
+        # Affichage de l'arrière-plan
+        background_image = pg.image.load("image/Ocean.png").convert()
+        resized_image = pg.transform.scale(background_image,
+                                           (self.screen_size[0] // 5, self.screen_size[1] // 5))  # Resize the image
+        
+        # Répéter l'image en boucle sur le haut de l'écran
+        for x in range(0, self.screen_size[0], resized_image.get_width()):
+            self.screen.blit(resized_image, (x, 0))
+        self.screen.blit(resized_image, (0, 0))
+
+        # Affichage des cases
+        self.__draw_tiles()
+
+    # AFFICHER LA BARRE DE FAIM
+    def __draw_hunger_bar(self, entity, i, j):
+        hunger_bar_width = self.cell_size * 3
+        hunger_bar_height = 5
+        hunger_level = entity.hunger
+        max_hunger = 100
+        hunger_bar_rect = pg.Rect(i * self.cell_size, j * self.cell_size - hunger_bar_height,
+                                    hunger_bar_width, hunger_bar_height)
+        pg.draw.rect(self.screen, (0, 255, 0), hunger_bar_rect)  # Fond de la barre de faim
+        hunger_fill_rect = pg.Rect(i * self.cell_size, j * self.cell_size - hunger_bar_height,
+                                    hunger_bar_width * hunger_level / max_hunger, hunger_bar_height)
+        pg.draw.rect(self.screen, (255, 0, 0), hunger_fill_rect)  # Remplissage de la barre de faim
+
+    # AFFICHER UNE ENTITE
+    def __draw_entity(self, i, j):
+        entity = self.world.entities[i, j]
+        entity_type = entity.entity_name
+        entity_image = self.entities.get(entity_type)
+        flipped = pg.transform.flip(entity_image, True, False)
+                    # Check if the entity moved to the right
+        if entity.last_movement == (1, 0):
+            image = flipped
+        else:
+            image = entity_image
+        image.set_colorkey((255, 255, 255))
+                    # Affichage de l'image
+        cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
+        self.screen.blit(image, cell_rect)
+
+                    # Affichage de la barre de faim
+        self.__draw_hunger_bar(entity, i, j)
+
     # AFFICHER LES ENTITES
     def __draw_entities(self) -> None:
         for i in range(self.world.entities.shape[0]):
             for j in range(self.world.entities.shape[1]):
-                # Récupération de l'image de la case
                 if self.world.entities[i, j]:
-                    entity = self.world.entities[i, j]
-                    entity_type = entity.entity_name
-                    entity_image = self.entities.get(entity_type)
-                    flipped = pg.transform.flip(entity_image, True, False)
-                    # Check if the entity moved to the right
-                    if entity.last_movement == (1, 0):
-                        image = flipped
-                    else:
-                        image = entity_image
-                    # Redimensionnement de l'image
-                    # resized_image = pg.transform.scale(image, (self.cell_size * 3, self.cell_size * 3))
-                    # MOn enlève le blanc autour de l'image
-                    # resized_image.set_colorkey((255, 255, 255))
-                    image.set_colorkey((255, 255, 255))
-                    # Affichage de l'image
-                    cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
-                    self.screen.blit(image, cell_rect)
-
-                    # Affichage de la barre de faim
-                    hunger_bar_width = self.cell_size * 3
-                    hunger_bar_height = 5
-                    hunger_level = entity.hunger
-                    max_hunger = 100
-                    hunger_bar_rect = pg.Rect(i * self.cell_size, j * self.cell_size - hunger_bar_height,
-                                              hunger_bar_width, hunger_bar_height)
-                    pg.draw.rect(self.screen, (0, 255, 0), hunger_bar_rect)  # Fond de la barre de faim
-                    hunger_fill_rect = pg.Rect(i * self.cell_size, j * self.cell_size - hunger_bar_height,
-                                               hunger_bar_width * hunger_level / max_hunger, hunger_bar_height)
-                    pg.draw.rect(self.screen, (255, 0, 0), hunger_fill_rect)  # Remplissage de la barre de faim
-
+                    self.__draw_entity(i, j)
         pg.display.flip()
+
+
 
     def __draw_ui(self) -> None:
         self.screen.fill((200, 250, 255))
@@ -127,10 +132,10 @@ class GridDisplay:
         temperature_rect = temperature_text.get_rect(topleft=(50, 100))
         self.screen.blit(temperature_text,
                          temperature_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
-        temperature_text = font.render(f"Light: {self.world.light},        <-W   X->", True, (0, 0, 0))
-        temperature_rect = temperature_text.get_rect(topleft=(50, 125))
-        self.screen.blit(temperature_text,
-                         temperature_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
+        light_text = font.render(f"Light: {self.world.light},        <-W   X->", True, (0, 0, 0))
+        light_rect = light_text.get_rect(topleft=(50, 125))
+        self.screen.blit(light_text,
+                         light_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
 
 
     # AFFICHER LA GRILLE EN BOUCLE
