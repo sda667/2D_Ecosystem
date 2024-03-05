@@ -40,6 +40,8 @@ class GridDisplay:
 
     # AFFICHER LA GRILLE
     def __draw_grid(self) -> None:
+        # Variable pour la profondeur
+        depth = 0
         # Couleur de fond
 
         background_image = pg.image.load("image/Ocean.png").convert()
@@ -53,11 +55,21 @@ class GridDisplay:
         for i in range(self.world.grid.shape[0]):
             for j in range(self.world.grid.shape[1]):
                 if self.world.grid[i, j] != 0:
+
+                    # Calcul de l'opacité en fonction de la profondeur
+                    depth = j / self.world.grid.shape[1]
+                    opacity = int(255 - (depth * 255))  # Calcul de l'opacité en fonction de la profondeur
+                    opacity = max(0, min(255, opacity))
+
                     # Récupération de l'image de la case
                     tile_type = self.world.grid[i, j].case_type
                     tile_image = self.tiles.get(tile_type)
                     # Redimensionnement de l'image
                     resized_image = pg.transform.scale(tile_image, (self.cell_size, self.cell_size))
+
+                    # Mise en place de l'opacité
+                    resized_image.set_alpha(opacity)
+
                     # Affichage de l'image
                     cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
                     self.screen.blit(resized_image, cell_rect)
@@ -141,10 +153,11 @@ class GridDisplay:
                 elif event.type == pg.KEYDOWN:
                     controllerUI.control_world(event.key)
             if mainloop:
+                self.screen.fill((0, 0, 0))  # Wipe the screen
                 self.__draw_grid()
                 self.__draw_entities()
                 pg.display.flip()
-                self.clock.tick(5)  # 10 FPS
+                self.clock.tick(10)  # 10 FPS
             else:
                 self.__draw_ui()
                 pg.display.flip()
