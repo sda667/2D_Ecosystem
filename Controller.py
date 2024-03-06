@@ -33,10 +33,10 @@ class Controller:
         name = entity.entity_name
         movement = entity.get_last_movement()
         weight_dict = {
-            (-1, 0): [0.1, 0.7, 0.1, 0.1],
-            (0, 1): [0.1, 0.1, 0.7, 0.1],
-            (1, 0): [0.7, 0.1, 0.1, 0.1],
-            (0, -1): [0.1, 0.1, 0.1, 0.7]}
+            (-1, 0): [0.05, 0.85, 0.05, 0.05],
+            (0, 1): [0.05, 0.05, 0.85, 0.05],
+            (1, 0): [0.85, 0.05, 0.05, 0.05],
+            (0, -1): [0.05, 0.05, 0.05, 0.85]}
 
         # Action suivant le dernier mouvement, s'ils est inconnu: aléatoire
         weights = weight_dict.get(movement, [0.25] * 4)
