@@ -231,8 +231,6 @@ class World:
                 self.entities[x, y] = Fish(age, hunger, max_age)
             elif name == "Crab":
                 self.entities[x, y] = Crab(age, hunger, max_age)
-            elif name == "Plankton":
-                self.entities[x, y] = Plankton()
             elif name == "Medusa":
                 self.entities[x, y] = Medusa(age, hunger, max_age)
             elif name == "Orca":

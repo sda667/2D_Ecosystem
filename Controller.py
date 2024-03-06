@@ -149,7 +149,7 @@ class Controller:
     def __status_update(self, x, y, entity_positions):
         entity = self.world.entities[(x, y)]
         # TODO change the value next to entity.entity_age to modify the aging of each entities/ turn
-        entity.set_entity_age(entity.entity_age + 0.001)
+        entity.set_entity_age(entity.entity_age + 1)
         # TODO change the value next to entity.entity_age to modify the evolution of hunger  of each entities/ turn
         entity.set_entity_hunger(entity.entity_hunger + 0.1)
         # for fish only, if fish is a fish, fish can eat and fish is in nearsea zone then it feed itself
