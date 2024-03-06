@@ -38,26 +38,111 @@ class GridDisplay:
         for entity_type, path in self.config["EntityPath"].items():
             entities[entity_type] = pg.image.load(path).convert_alpha()
         return entities
-    
+
+    def set_colorkey_with_tolerance(self, image, colorkey, tolerance):
+        # Convert the image to use an alpha channel
+        image = image.convert_alpha()
+
+        # Get the width and height of the image
+        width, height = image.get_size()
+
+        # Iterate over each pixel in the image
+        for y in range(height):
+            for x in range(width):
+                # Get the color of the current pixel
+                current_color = image.get_at((x, y))
+
+                # If the current color is white, set the alpha value to 0 (fully transparent)
+                if current_color == colorkey:
+                    image.set_at((x, y), (0, 0, 0, 0))  # Set alpha to 0 (fully transparent)
+                else:
+                    # Calculate the difference between the current color and the color key
+                    color_diff = abs(current_color[0] - colorkey[0]) + \
+                                 abs(current_color[1] - colorkey[1]) + \
+                                 abs(current_color[2] - colorkey[2])
+
+                    # If the difference is within the tolerance level, set the alpha value to 0 (fully transparent)
+                    if color_diff <= tolerance:
+                        current_color[3] = 0  # Set alpha to 0 (fully transparent)
+
+                        # Update the pixel with the modified color
+                        image.set_at((x, y), current_color)
+
+        # Set the color key to None since we're using alpha transparency
+        image.set_colorkey(None)
+
+        return image
     # AFFICHER LES CASES
     def __draw_tiles(self):
         for i in range(self.world.grid.shape[0]):
             for j in range(self.world.grid.shape[1]):
                 if self.world.grid[i, j] != 0:
-                    # Calcul de l'opacité en fonction de la profondeur
-                    depth = j / self.world.grid.shape[1]
-                    opacity = int(255 - (depth * 255))  # Calcul de l'opacité en fonction de la profondeur
-                    opacity = max(0, min(255, opacity))
+                    if self.world.grid[i, j].case_type == "Sun":
+                        if self.world.sun:
+                            tile_image = pg.image.load("image/Sun.jpg").convert()
+                            tile_image = self.set_colorkey_with_tolerance(tile_image, (255, 255, 255), 50)
+                            resized_image = pg.transform.scale(tile_image, (self.cell_size * 3, self.cell_size * 3))
+                            cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size,
+                                                self.cell_size)
+                            self.screen.blit(resized_image, cell_rect)
+                            if self.world.light > 2:
+                                if self.world.light <= 4:
+                                    tile_image = pg.image.load("image/Sun_type_1.jpg").convert()
+                                    tile_image = self.set_colorkey_with_tolerance(tile_image, (255, 255, 255), 50)
+                                    resized_image = pg.transform.scale(tile_image,
+                                                                       (self.cell_size * 3, self.cell_size * 3))
+                                    cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size,
+                                                        self.cell_size)
+                                    self.screen.blit(resized_image, cell_rect)
+                                elif self.world.light <=6:
 
-                    # Récupération de l'image de la case (et redimensionnement, opacité)
-                    tile_type = self.world.grid[i, j].case_type
-                    tile_image = self.tiles.get(tile_type)
-                    resized_image = pg.transform.scale(tile_image, (self.cell_size, self.cell_size))
-                    resized_image.set_alpha(opacity)
+                                    tile_image = pg.image.load("image/Sun_type_2.jpg").convert()
+                                    tile_image = self.set_colorkey_with_tolerance(tile_image, (255, 255, 255), 50)
+                                    resized_image = pg.transform.scale(tile_image,
+                                                                       (self.cell_size * 3, self.cell_size * 3))
+                                    cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size,
+                                                        self.cell_size)
+                                    self.screen.blit(resized_image, cell_rect)
+                                elif self.world. light <=8:
+                                    tile_image = pg.image.load("image/Sun_type_3.jpg").convert()
+                                    tile_image = self.set_colorkey_with_tolerance(tile_image, (255, 255, 255), 50)
+                                    resized_image = pg.transform.scale(tile_image,
+                                                                       (self.cell_size * 3, self.cell_size * 3))
+                                    cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size,
+                                                        self.cell_size)
+                                    self.screen.blit(resized_image, cell_rect)
+                                elif self.world. light <=10:
+                                    tile_image = pg.image.load("image/Sun_type_4.jpg").convert()
+                                    tile_image = self.set_colorkey_with_tolerance(tile_image, (255, 255, 255), 50)
+                                    resized_image = pg.transform.scale(tile_image,
+                                                                       (self.cell_size * 3, self.cell_size * 3))
+                                    cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size,
+                                                        self.cell_size)
+                                    self.screen.blit(resized_image, cell_rect)
 
-                    # Affichage de l'image
-                    cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
-                    self.screen.blit(resized_image, cell_rect)
+                        else:
+                            tile_image = pg.image.load("image/DeadSun.jpg").convert()
+                            tile_image = self.set_colorkey_with_tolerance(tile_image, (255, 255, 255), 50)
+                            resized_image = pg.transform.scale(tile_image, (self.cell_size * 3, self.cell_size * 3))
+                            cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size,
+                                                self.cell_size)
+                            self.screen.blit(resized_image, cell_rect)
+                    else:
+                        # Calcul de l'opacité en fonction de la profondeur
+                        depth = j / self.world.grid.shape[1]
+                        opacity = int(255 - (depth * 255))  # Calcul de l'opacité en fonction de la profondeur
+                        opacity = max(0, min(255, opacity))
+                        # Récupération de l'image de la case (et redimensionnement, opacité)
+                        tile_type = self.world.grid[i, j].case_type
+                        tile_image = self.tiles.get(tile_type)
+                        resized_image = pg.transform.scale(tile_image, (self.cell_size, self.cell_size))
+                        resized_image.set_alpha(opacity)
+
+                        # Affichage de l'image
+                        cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
+                        self.screen.blit(resized_image, cell_rect)
+
+
 
     # AFFICHER LA GRILLE
     def __draw_grid(self) -> None:

@@ -114,6 +114,8 @@ class World:
     def set_case(self, x: int, y: int, type: str):
         if type == "S":
             self.grid[(x, y)] = SurfaceSea()
+        elif type == "Sun":
+            self.grid[(x, y)] = Sun()
         elif type == "M":
             self.grid[(x, y)] = CaseSea()
         elif type == "C":
@@ -156,6 +158,7 @@ class World:
 
         line_values = ['.'] * sky_layers + ['S'] * surfacesea_layers + ['M'] * sea_layers + ['D'] * deepsea_layers
         world_matrix = [[value] * self.j_size for value in line_values]
+        world_matrix[0][self.j_size//2] = "Sun"
         self.generate_random_floor(world_matrix, sky_layers)
         for i in range(self.i_size):
             for j in range(self.j_size):
