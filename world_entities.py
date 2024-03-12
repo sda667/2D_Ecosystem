@@ -31,7 +31,7 @@ class Entity(ABC):
         self.vision = 0
         self.max_pollution = 0
         self.temp = (0, 1)  # Perfect temp for creature
-        self.prey_set = set("Plankton")
+        self.prey_set = set()
 
     def brain(self, myposition: tuple, entities_position: list, world: world) -> str:
         if self.entity_speed_cooldown == 0 and self.entity_speed != -1:
@@ -279,7 +279,7 @@ class Fish(Entity):
         self.set_entity_birth(0)
         self.set_entity_birth_cooldown(10)
         self.set_entity_max_age(max_age*simulation_value_A)  # max age of the entity , multiplied by a value to keep the simulation
-        self.set_entity_speed(3)
+        self.set_entity_speed(2)
         self.set_entity_vision(3)
 
         self.set_entity_name("Fish" + str(random.randint(0, 2)))

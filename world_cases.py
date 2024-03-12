@@ -64,3 +64,8 @@ class Volcano(Case):
     def __init__(self) -> None:
         super().__init__()
         self.name = "Volcano"
+
+class Graph(Case):
+    def __init__(self) -> None:
+        super().__init__()
+        self.name = "Graph"

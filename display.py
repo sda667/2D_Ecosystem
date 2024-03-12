@@ -1,7 +1,13 @@
-import pygame as pg
 import json
-from world import *
+from typing import Any
+
+import pygame as pg
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from pygame import Surface
+
 from controller_ui import ControllerUI
+from world import *
+import matplotlib.pyplot as plt
 
 class GridDisplay:
     """
@@ -19,21 +25,21 @@ class GridDisplay:
         self.tiles = self.__load_tiles()
         self.entities = self.__load_entities()
         self.prev_entities = np.copy(self.world.entities)  # Copy the entities grid to compare with the next state
-
+        self.data: list[dict[str, int]] = []
     # CHARGER LA CONFIGURATION (FICHIER JSON)
     def __load_config(self, config_file: str) -> None:
         with open(config_file, "r") as file:
             return json.load(file)
 
     # CHARGER LES CHEMINS DES IMAGES DES CASES (DEPUIS LA CONFIGURATION)
-    def __load_tiles(self) -> None:
+    def __load_tiles(self) -> dict:
         tiles = {}
         for tile_type, path in self.config["TilesPath"].items():
             tiles[tile_type] = pg.image.load(path).convert()
         return tiles
 
     # CHARGER LES CHEMINS DES IMAGES DES ENTITES (DEPUIS LA CONFIGURATION)
-    def __load_entities(self) -> None:
+    def __load_entities(self) -> dict[Any, Surface]:
         entities = {}
         for entity_type, path in self.config["EntityPath"].items():
             entities[entity_type] = pg.image.load(path).convert_alpha()
@@ -222,11 +228,70 @@ class GridDisplay:
         self.screen.blit(light_text,
                          light_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
 
+    def __draw_graph(self):
+        image = self.make_graph()
+        self.screen.blit(image, (0, 0))
+    def get_ten_length_list(self, list):
+        if list.__len__() == 10:
+            return list
+        else:
+            new_list = [0 for i in range(10 - list.__len__())]
+            new_list.extend(list)
+            return new_list
+
+    def make_graph(self):
+        element_lists: dict[str, list] = self.convertData()
+        fig, ax = plt.subplots()
+        for element in element_lists:
+            test = self.get_ten_length_list(element_lists.get(element))
+            ax.plot(range(10), self.get_ten_length_list(element_lists.get(element)), label=element)
+        ax.set_xlabel('ticks')
+        ax.set_ylabel('Numbers')
+        ax.set_title('Numbers of creatures')
+        ax.legend()
+        canvas = FigureCanvas(fig)
+        canvas.draw()
+        renderer = canvas.get_renderer()
+        raw_data = renderer.tostring_rgb()
+        size = canvas.get_width_height()
+        surf = pg.image.fromstring(raw_data, size, "RGB")
+        return surf
+
+
+    def convertData(self):
+        element_lists = dict()
+        for data in self.data:
+            for key in data:
+                element_lists[key] = element_lists.get(key, [])
+                element_lists[key].append(data.get(key))
+        return element_lists
+
+
+    def count_current_elements(self):
+        List_Entityt = ["Shark", "Fish", "Medusa", "Orca", "Crab"]
+        dictionary = dict()
+        for i in range(self.world.entities.shape[0]):
+            for j in range(self.world.entities.shape[1]):
+                if self.world.entities[i, j] != 0:
+                    entity: Entity = self.world.entities[i, j]
+                    dictionary[entity.__class__.__name__] = dictionary.get(entity.__class__.__name__, 0)+1
+        for entity in List_Entityt:
+            if not dictionary.get(entity, False):
+                dictionary[entity] = 0
+        if self.data.__len__() < 10:
+            self.data.append(dictionary)
+        else:
+            while not (self.data.__len__() < 10):
+                self.data.pop(0)
+            self.data.append(dictionary)
+
+
 
     # AFFICHER LA GRILLE EN BOUCLE
     def start_display(self, event_queue) -> None:
         controllerUI = ControllerUI(self.world)
         mainloop = True
+        secondLoop = False
         running = True
         while running:
             while not event_queue.empty():
@@ -238,8 +303,13 @@ class GridDisplay:
                     running = False
                 elif event.type == pg.KEYDOWN and event.key == pg.K_DOWN:
                     mainloop = False
+                    secondLoop = False
                 elif event.type == pg.KEYDOWN and event.key == pg.K_UP:
                     mainloop = True
+                    secondLoop = False
+                elif event.type == pg.KEYDOWN and event.key == pg.K_LEFT:
+                    mainloop = False
+                    secondLoop = True
                 elif event.type == pg.KEYDOWN:
                     controllerUI.control_world(event.key)
             if mainloop:
@@ -248,7 +318,13 @@ class GridDisplay:
                 self.__draw_entities()
                 pg.display.flip()
                 self.clock.tick(10)  # 10 FPS
+            elif secondLoop:
+                self.screen.fill((0, 0, 0))  # Wipe the screen
+                self.__draw_graph()
+                pg.display.flip()
+                self.clock.tick(10)  # 10 FPS
             else:
+                self.screen.fill((0, 0, 0))  # Wipe the screen
                 self.__draw_ui()
                 pg.display.flip()
                 self.clock.tick(10)  # 10 FPS

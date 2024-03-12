@@ -13,7 +13,6 @@ def main(cell_size=15, x_size=60, y_size=120, seed=time.time()) -> None:
     screen_size = (y_size * cell_size, x_size * cell_size)
     # Initialisation du monde
     monde = World(x_size, y_size, seed)
-
     generate_entities("World data/entities.txt")
     monde.generate_world("World data/entities.txt")
     event_queue = queue.Queue()
@@ -21,13 +20,16 @@ def main(cell_size=15, x_size=60, y_size=120, seed=time.time()) -> None:
     thread = threading.Thread(target=grid_display.start_display, args=(event_queue,), daemon=True)
     thread.start()
     # Initialisation du contrôleur
-
     controleur = Controller(monde)
-    plankton_update_timer = 0
+    timer = 0
     while True:
         for event in pygame.event.get():
             event_queue.put(event)
-        plankton_update_timer += 1
+        timer += 1
+        # TODO change the value to change the number of turn to update the graph
+        if (timer % 10 == 0):
+            grid_display.count_current_elements()
+            timer %= 10
         # TODO change the value to change the time each turn take
         time.sleep(0.2)
         controleur.update_entities()

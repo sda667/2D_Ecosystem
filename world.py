@@ -124,6 +124,8 @@ class World:
             self.grid[(x, y)] = DeepSea()
         elif type == "L":
             self.grid[(x, y)] = Land()
+        elif type == "G":
+            self.grid[(x, y)] = Graph()
         elif type == ".":
             pass
 
@@ -244,8 +246,6 @@ class World:
                 self.entities[x, y] = Fish()
             elif name == "Crab":
                 self.entities[x, y] = Crab()
-            elif name == "Plankton":
-                self.entities[x, y] = Plankton()
             elif name == "Medusa":
                 self.entities[x, y] = Medusa()
             elif name == "Orca":
