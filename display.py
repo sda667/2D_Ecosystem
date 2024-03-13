@@ -8,7 +8,7 @@ from pygame import Surface
 from controller_ui import ControllerUI
 from world import *
 import matplotlib.pyplot as plt
-
+from colors import *
 class GridDisplay:
     """
     Classe permettant d'afficher la grille du monde
@@ -26,6 +26,7 @@ class GridDisplay:
         self.entities = self.__load_entities()
         self.prev_entities = np.copy(self.world.entities)  # Copy the entities grid to compare with the next state
         self.data: list[dict[str, int]] = []
+        self.analyze_size = 400
     # CHARGER LA CONFIGURATION (FICHIER JSON)
     def __load_config(self, config_file: str) -> None:
         with open(config_file, "r") as file:
@@ -192,10 +193,23 @@ class GridDisplay:
             image = entity_image
         image.set_colorkey((255, 255, 255))
                     # Affichage de l'image
-        cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
-        self.screen.blit(image, cell_rect)
+        size = image.get_size()
 
-                    # Affichage de la barre de faim
+        cell_rect = pg.Rect(i * self.cell_size+self.cell_size/2-size[0]/2, j * self.cell_size+self.cell_size/2-size[1]/2, self.cell_size, self.cell_size)
+        self.screen.blit(image, cell_rect)
+        # TODO set to true to show drawing zone and the entity true case
+        if False:
+            _cell_rect = pg.Rect(i * self.cell_size + self.cell_size / 2 - size[0] / 2,
+                                 j * self.cell_size + self.cell_size / 2 - size[1] / 2, size[0], size[1])
+            pg.draw.rect(self.screen, RED, _cell_rect, 2)
+            true_cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
+            pg.draw.rect(self.screen, RED, true_cell_rect, 2)
+        if (i, j) == self.world.target and self.analyze:
+            _cell_rect = pg.Rect(i * self.cell_size + self.cell_size / 2 - size[0] / 2,
+                                 j * self.cell_size + self.cell_size / 2 - size[1] / 2, size[0], size[1])
+            pg.draw.rect(self.screen, RED, _cell_rect, 2)
+
+        # Affichage de la barre de faim
         self.__draw_hunger_bar(entity, i, j)
 
     # AFFICHER LES ENTITES
@@ -204,7 +218,6 @@ class GridDisplay:
             for j in range(self.world.entities.shape[1]):
                 if self.world.entities[i, j]:
                     self.__draw_entity(i, j)
-        pg.display.flip()
 
 
 
@@ -230,6 +243,7 @@ class GridDisplay:
 
     def __draw_graph(self):
         image = self.make_graph()
+        #size =  image.get_size()
         self.screen.blit(image, (0, 0))
     def get_ten_length_list(self, list):
         if list.__len__() == 10:
@@ -285,13 +299,45 @@ class GridDisplay:
                 self.data.pop(0)
             self.data.append(dictionary)
 
+    def check_target(self):
+        if not (self.get_target() != 0):
+            for i in range(self.world.entities.shape[0]):
+                for j in range(self.world.entities.shape[1]):
+                    if self.world.entities[i, j] != 0:
+                        self.world.target = (i, j)
+                        return True
+            return False
+        else:
+            return True
+
+
+    def get_target(self) -> Entity:
+       return self.world.entities[self.world.target]
+    def __draw_analyze(self):
+        ecard = 20
+        starting_x_position = self.world.grid.shape[0]*self.cell_size-self.analyze_size
+        rect = ((self.world.grid.shape[0]*self.cell_size-self.analyze_size), 0, self.analyze_size, self.analyze_size)
+        pg.draw.rect(self.screen, MEDIUM_BLUE, rect)
+        pg.draw.rect(self.screen, DARKEST_BLUE, rect, 4)
+        image = self.entities.get(self.get_target().entity_name)
+        image_size = image.get_size()
+        image_case = pg.Rect(starting_x_position + self.analyze_size / 2 - image_size[0]/2, self.analyze_size / 4 - image_size[1]/2, image_size[0], image_size[1])
+        image_case_bis = pg.Rect(starting_x_position + self.analyze_size / 2 - image_size[0]/2-5, self.analyze_size / 4 - image_size[1]/2-5, image_size[0]+10, image_size[1]+10)
+        pg.draw.rect(self.screen, CLAIR_BLUE, image_case_bis)
+        pg.draw.rect(self.screen, DARKER_BLUE, image_case_bis, 2)
+        self.screen.blit(image, image_case)
+        text_case = pg.Rect(starting_x_position+ecard, self.analyze_size/2+ecard, self.analyze_size-ecard*2, self.analyze_size/2-ecard*2)
+        pg.draw.rect(self.screen, CLAIR_BLUE, text_case)
+        pg.draw.rect(self.screen, DARKER_BLUE, text_case, 2)
 
 
     # AFFICHER LA GRILLE EN BOUCLE
     def start_display(self, event_queue) -> None:
         controllerUI = ControllerUI(self.world)
         mainloop = True
-        secondLoop = False
+        graph = False
+        self.analyze = False
+        E_creature = True
         running = True
         while running:
             while not event_queue.empty():
@@ -303,26 +349,29 @@ class GridDisplay:
                     running = False
                 elif event.type == pg.KEYDOWN and event.key == pg.K_DOWN:
                     mainloop = False
-                    secondLoop = False
                 elif event.type == pg.KEYDOWN and event.key == pg.K_UP:
                     mainloop = True
-                    secondLoop = False
-                elif event.type == pg.KEYDOWN and event.key == pg.K_LEFT:
-                    mainloop = False
-                    secondLoop = True
+                elif event.type == pg.KEYDOWN and event.key == pg.K_g:
+                    if graph:
+                        graph = False
+                    else:
+                        graph = True
+                elif event.type == pg.KEYDOWN and event.key == pg.K_a:
+                    self.analyze = not self.analyze
                 elif event.type == pg.KEYDOWN:
                     controllerUI.control_world(event.key)
             if mainloop:
                 self.screen.fill((0, 0, 0))  # Wipe the screen
                 self.__draw_grid()
                 self.__draw_entities()
+                if graph:
+                    self.__draw_graph()
+                if self.analyze and E_creature:
+                    E_creature = self.check_target()
+                    if E_creature:
+                        self.__draw_analyze()
                 pg.display.flip()
-                self.clock.tick(10)  # 10 FPS
-            elif secondLoop:
-                self.screen.fill((0, 0, 0))  # Wipe the screen
-                self.__draw_graph()
-                pg.display.flip()
-                self.clock.tick(10)  # 10 FPS
+                self.clock.tick(5)  # 10 FPS
             else:
                 self.screen.fill((0, 0, 0))  # Wipe the screen
                 self.__draw_ui()

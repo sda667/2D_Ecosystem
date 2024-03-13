@@ -17,6 +17,8 @@ class Controller:
 
     # DEPLACEMENT IDLE D'UNE ENTITE (STOCHASTIQUE, MARCHE ALEATOIRE A MEMOIRE)
     def move(self, entity, start, end):
+        if start == self.world.target:
+            self.world.target = end
         self.world.entities[end] = entity
         self.world.clear_entity(*start)
         entity.set_entity_hunger(entity.entity_hunger + 0.5)

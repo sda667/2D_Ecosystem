@@ -104,6 +104,7 @@ class World:
         self.crab_existence = (20, 30)
         self.temperature = 20
         self.light = 5
+        self.target: tuple[int, int] = (0, 0)
 
     # GETTER DE LA GRILLE
     @property

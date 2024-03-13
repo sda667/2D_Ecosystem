@@ -30,6 +30,31 @@ class ControllerUI:
                 print("relight sun")
                 self.world.light += 1
                 self.world.sun = True
+        if event_key == pg.K_LEFT:
+            i = self.world.target[0]
+            for j in range(self.world.target[1]-1, -1, -1):
+                if self.world.entities[i, j] != 0:
+                    self.world.target = (i, j)
+                    return
+
+            for i in range(self.world.target[0]-1, -1, -1):
+                for j in range(self.world.entities.shape[1]-1, -1, -1):
+                    if self.world.entities[i, j] != 0:
+                        self.world.target = (i, j)
+                        return
+        elif event_key == pg.K_RIGHT:
+            i = self.world.target[0]
+            for j in range(self.world.target[1]+1, self.world.entities.shape[1]):
+                if self.world.entities[i, j] != 0:
+                    self.world.target = (i, j)
+                    return
+
+            for i in range(self.world.target[0]+1, self.world.entities.shape[0]):
+                for j in range(self.world.entities.shape[1]):
+                    if self.world.entities[i, j] != 0:
+                        self.world.target = (i, j)
+                        return
+
 
 
         else:
