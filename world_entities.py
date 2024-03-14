@@ -32,23 +32,29 @@ class Entity(ABC):
         self.max_pollution = 0
         self.temp = (0, 1)  # Perfect temp for creature
         self.prey_set = set()
+        self.current_action = ""
 
     def brain(self, myposition: tuple, entities_position: list, world: world) -> str:
         if self.entity_speed_cooldown == 0 and self.entity_speed != -1:
             if self.check_threat(myposition, entities_position, world):
+                self.current_action = "Flee"
                 return "Flee"
             # TODO change the number here to change the minimal hunger for predation
             elif (self.entity_hunger >= 50) and (
                     self.check_prey(myposition, entities_position, world)):
+                self.current_action = "Predation"
                 return "Predation"
             else:
                 # TODO change the number here for self.entity_hunger to change the maximal accepted hunger for birth
                 if self.birth == 0 and self.entity_hunger <= 40 and self.mate_check(myposition, entities_position,
                                                                                     world):
+                    self.current_action = "Mate"
                     return "Mate"
                 else:
+                    self.current_action = "Idle"
                     return "Idle"
         else:
+            self.current_action = "Stay"
             return "Stay"
 
     # check if there is mate that is not myself, same specie , can birth and are close enough to me

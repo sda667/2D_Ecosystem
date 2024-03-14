@@ -240,7 +240,14 @@ class GridDisplay:
         light_rect = light_text.get_rect(topleft=(50, 125))
         self.screen.blit(light_text,
                          light_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
-
+        graph_text = font.render(f"Graphe: G", True, (0, 0, 0))
+        graph_rect = light_text.get_rect(topleft=(50, 150))
+        self.screen.blit(graph_text,
+                         graph_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
+        analyse_text = font.render(f"Analyse: A", True, (0, 0, 0))
+        analyse_rect = light_text.get_rect(topleft=(50, 175))
+        self.screen.blit(analyse_text,
+                         analyse_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
     def __draw_graph(self):
         image = self.make_graph()
         #size =  image.get_size()
@@ -315,6 +322,7 @@ class GridDisplay:
        return self.world.entities[self.world.target]
     def __draw_analyze(self):
         ecard = 20
+        text_ecart = 15
         starting_x_position = self.world.grid.shape[0]*self.cell_size-self.analyze_size
         rect = ((self.world.grid.shape[0]*self.cell_size-self.analyze_size), 0, self.analyze_size, self.analyze_size)
         pg.draw.rect(self.screen, MEDIUM_BLUE, rect)
@@ -329,6 +337,14 @@ class GridDisplay:
         text_case = pg.Rect(starting_x_position+ecard, self.analyze_size/2+ecard, self.analyze_size-ecard*2, self.analyze_size/2-ecard*2)
         pg.draw.rect(self.screen, CLAIR_BLUE, text_case)
         pg.draw.rect(self.screen, DARKER_BLUE, text_case, 2)
+
+        font = pg.font.Font(None, 24)
+        text_list = [f"Type : {self.get_target().entity_name}", f"Position: {self.world.target}", f"Age: {self.get_target().age//simulation_value_A}", f"faim: {int(100 - self.get_target().entity_hunger)}", f"Action: {self.get_target().current_action}", f"Movement cooldown: {self.get_target().speed_cooldown}", f"Naissance cooldown: {self.get_target().birth}"]
+        for line in range(len(text_list)):
+            line_case = pg.Rect(starting_x_position + ecard, self.analyze_size / 2 + ecard + line*text_ecart + 5,
+                                self.analyze_size - ecard * 2, self.analyze_size / 2 - ecard * 2)
+            text = font.render(text_list[line], True, (0, 0, 0))
+            self.screen.blit(text, line_case)
 
 
     # AFFICHER LA GRILLE EN BOUCLE
