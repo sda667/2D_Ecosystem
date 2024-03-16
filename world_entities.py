@@ -33,6 +33,7 @@ class Entity(ABC):
         self.temp = (0, 1)  # Perfect temp for creature
         self.prey_set = set()
         self.current_action = ""
+        self.max_fish = 100
 
     def brain(self, myposition: tuple, entities_position: list, world: world) -> str:
         if self.entity_speed_cooldown == 0 and self.entity_speed != -1:
@@ -40,13 +41,14 @@ class Entity(ABC):
                 self.current_action = "Flee"
                 return "Flee"
             # TODO change the number here to change the minimal hunger for predation
-            elif (self.entity_hunger >= 50) and (
+            elif (self.entity_hunger >= 30) and (
                     self.check_prey(myposition, entities_position, world)):
                 self.current_action = "Predation"
                 return "Predation"
             else:
                 # TODO change the number here for self.entity_hunger to change the maximal accepted hunger for birth
-                if self.birth == 0 and self.entity_hunger <= 40 and self.mate_check(myposition, entities_position,
+                if self.birth == 0 and self.entity_hunger <= 40 and self.species_number_check(myposition, entities_position,
+                                                                                    world) and self.mate_check(myposition, entities_position,
                                                                                     world):
                     self.current_action = "Mate"
                     return "Mate"
@@ -67,6 +69,16 @@ class Entity(ABC):
                     entity_position) <= self.entity_vision:
                 return True
         return False
+
+    def species_number_check(self, myposition, entities_position, world):
+        count = 0
+        for entity in entities_position:
+            if type(world.entities[entity]) == type(self):
+                count +=1
+        if count >= self.max_fish:
+            return False
+        else:
+            return True
 
     def eat(self, entity):
         # TODO change value next to * to change the number of hunger entity_type give
@@ -281,6 +293,7 @@ class Fish(Entity):
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
+        self.max_fish = 30
         self.set_entity_birth(0)
         self.set_entity_birth_cooldown(10)
         self.set_entity_max_age(max_age*simulation_value_A)  # max age of the entity , multiplied by a value to keep the simulation
@@ -327,7 +340,7 @@ class Shark(Entity):
         self.set_entity_hunger(hunger)
 
         self.set_entity_birth(50)
-        self.set_entity_birth_cooldown(50)
+        self.set_entity_birth_cooldown(100)
         self.set_entity_max_age(max_age*simulation_value_A)
         self.set_entity_speed(1)
         self.set_entity_vision(20)
@@ -345,8 +358,8 @@ class Orca(Entity):
         self.set_entity_age(age)
         self.set_entity_hunger(hunger)
 
-        self.set_entity_birth(100)
-        self.set_entity_birth_cooldown(100)  # not configured yet
+        self.set_entity_birth(250)
+        self.set_entity_birth_cooldown(500)  # not configured yet
         self.set_entity_max_age(max_age*simulation_value_A)
         self.set_entity_speed(0)  # not configured yet
         self.set_entity_vision(30)  # not configured yet
