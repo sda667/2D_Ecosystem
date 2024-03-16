@@ -1,6 +1,6 @@
 import queue
 
-import pygame.event
+import pygame
 
 from display import GridDisplay
 from world import *

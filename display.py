@@ -2,6 +2,7 @@ import json
 from typing import Any
 
 import pygame as pg
+import matplotlib
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from pygame import Surface
 

@@ -54,7 +54,6 @@ class Entity(ABC):
                     self.current_action = "Idle"
                     return "Idle"
         else:
-            self.current_action = "Stay"
             return "Stay"
 
     # check if there is mate that is not myself, same specie , can birth and are close enough to me
@@ -286,7 +285,7 @@ class Fish(Entity):
         self.set_entity_birth_cooldown(10)
         self.set_entity_max_age(max_age*simulation_value_A)  # max age of the entity , multiplied by a value to keep the simulation
         self.set_entity_speed(2)
-        self.set_entity_vision(3)
+        self.set_entity_vision(7)
 
         self.set_entity_name("Fish" + str(random.randint(0, 2)))
         self.set_entity_type(1)

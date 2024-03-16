@@ -9,7 +9,9 @@ __pycache__
 venv/
 .idea/
 __pycache__/
+build/
+dist/
 # Ignore all files with a certain extension
 *.log
-
+*.spec
 __pycache__/world.cpython-310.pyc
