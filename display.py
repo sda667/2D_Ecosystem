@@ -31,6 +31,7 @@ class GridDisplay:
         self.prev_entities = np.copy(self.world.entities)  # Copy the entities grid to compare with the next state
         self.data: list[dict[str, int]] = []
         self.analyze_size = 400
+        self.i = -1
     # CHARGER LA CONFIGURATION (FICHIER JSON)
     def __load_config(self, config_file: str) -> None:
         with open(config_file, "r") as file:
@@ -50,6 +51,7 @@ class GridDisplay:
             entities[entity_type] = pg.image.load(path).convert_alpha()
         return entities
 
+    # SET COLORKEY WITH TOLERANCE
     def set_colorkey_with_tolerance(self, image, colorkey, tolerance):
         # Convert the image to use an alpha channel
         image = image.convert_alpha()
@@ -83,6 +85,7 @@ class GridDisplay:
         image.set_colorkey(None)
 
         return image
+
     # AFFICHER LES CASES
     def __draw_tiles(self):
         for i in range(self.world.grid.shape[0]):
@@ -153,8 +156,6 @@ class GridDisplay:
                         cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
                         self.screen.blit(resized_image, cell_rect)
 
-
-
     # AFFICHER LA GRILLE
     def __draw_grid(self) -> None:
         
@@ -223,8 +224,7 @@ class GridDisplay:
                 if self.world.entities[i, j]:
                     self.__draw_entity(i, j)
 
-
-
+    # AFFICHER UI
     def __draw_ui(self) -> None:
         self.screen.fill((200, 250, 255))
         font = pg.font.Font(None, 24)
@@ -252,11 +252,14 @@ class GridDisplay:
         analyse_rect = light_text.get_rect(topleft=(50, 175))
         self.screen.blit(analyse_text,
                          analyse_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
+
+    # AFFICHER GRAPHE
     def __draw_graph(self):
         image = self.make_graph()
         #size =  image.get_size()
 
         self.screen.blit(image, (0, 490))
+
     def get_ten_length_list(self, list):
         if list.__len__() == 10:
             return list
@@ -270,8 +273,7 @@ class GridDisplay:
         fig, ax = plt.subplots()
         fig.set_size_inches(400 / fig.dpi, 400 / fig.dpi)
         for element in element_lists:
-            test = self.get_ten_length_list(element_lists.get(element))
-            ax.plot(range(10), self.get_ten_length_list(element_lists.get(element)), label=element)
+            ax.plot([(self.i-9)*10, (self.i-8)*10, (self.i-7)*10, (self.i-6)*10, (self.i-5)*10, (self.i-4)*10, (self.i-3)*10, (self.i-2)*10, (self.i-1)*10, self.i*10], self.get_ten_length_list(element_lists.get(element)), label=element)
         ax.set_xlabel('ticks', color='w')
         ax.set_ylabel('Numbers', color='w')
         ax.set_title('Numbers of creatures', color='w')
@@ -305,6 +307,7 @@ class GridDisplay:
     def count_current_elements(self):
         List_Entityt = ["Shark", "Fish", "Medusa", "Orca", "Crab"]
         dictionary = dict()
+        self.i +=1
         for i in range(self.world.entities.shape[0]):
             for j in range(self.world.entities.shape[1]):
                 if self.world.entities[i, j] != 0:
