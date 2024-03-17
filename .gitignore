@@ -15,3 +15,4 @@ dist/
 *.log
 *.spec
 __pycache__/world.cpython-310.pyc
+World data/entities.txt

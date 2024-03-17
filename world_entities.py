@@ -265,7 +265,7 @@ class Crab(Entity):
         self.set_entity_type(2)
         self.set_entity_depth("Deep Sea")
         self.set_entity_zone("Near Beach")
-        self.set_entity_preys(["Fish1", "Fish2"])
+        self.set_entity_preys(["Fish1", "Fish0"])
 
 
 class Medusa(Entity):

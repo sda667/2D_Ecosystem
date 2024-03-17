@@ -10,6 +10,9 @@ from controller_ui import ControllerUI
 from world import *
 import matplotlib.pyplot as plt
 from colors import *
+import os
+
+
 class GridDisplay:
     """
     Classe permettant d'afficher la grille du monde
@@ -252,7 +255,8 @@ class GridDisplay:
     def __draw_graph(self):
         image = self.make_graph()
         #size =  image.get_size()
-        self.screen.blit(image, (0, 0))
+
+        self.screen.blit(image, (0, 490))
     def get_ten_length_list(self, list):
         if list.__len__() == 10:
             return list
@@ -264,19 +268,28 @@ class GridDisplay:
     def make_graph(self):
         element_lists: dict[str, list] = self.convertData()
         fig, ax = plt.subplots()
+        fig.set_size_inches(400 / fig.dpi, 400 / fig.dpi)
         for element in element_lists:
             test = self.get_ten_length_list(element_lists.get(element))
             ax.plot(range(10), self.get_ten_length_list(element_lists.get(element)), label=element)
-        ax.set_xlabel('ticks')
-        ax.set_ylabel('Numbers')
-        ax.set_title('Numbers of creatures')
+        ax.set_xlabel('ticks', color='w')
+        ax.set_ylabel('Numbers', color='w')
+        ax.set_title('Numbers of creatures', color='w')
+        ax.tick_params(axis='x', colors='w')
+        ax.tick_params(axis='y', colors='w')
         ax.legend()
+
         canvas = FigureCanvas(fig)
         canvas.draw()
         renderer = canvas.get_renderer()
-        raw_data = renderer.tostring_rgb()
-        size = canvas.get_width_height()
-        surf = pg.image.fromstring(raw_data, size, "RGB")
+        #raw_data = renderer.tostring_rgb()
+        #size = canvas.get_width_height()
+        #surf = pg.image.fromstring(raw_data, size, "RGB")
+        fig.patch.set_facecolor('none')
+        temp_file = "temp_graph.png"
+        fig.savefig(temp_file, transparent=True)
+        surf = pg.image.load(temp_file).convert_alpha()
+        os.remove(temp_file)
         return surf
 
 
@@ -352,7 +365,7 @@ class GridDisplay:
     def start_display(self, event_queue) -> None:
         controllerUI = ControllerUI(self.world)
         mainloop = True
-        graph = False
+        graph = True
         self.analyze = False
         E_creature = True
         running = True

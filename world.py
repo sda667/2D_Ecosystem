@@ -242,6 +242,7 @@ class World:
             new_pos = (random.randint(8, 59), random.randint(1, 119))
             self.set_init_entity(name, new_pos[1], new_pos[0], age, hunger, max_age)
 
+
     def set_entity(self, name, x, y):
         if self.grid[(x, y)] != 0 and self.grid[(x, y)].name != "Coral":
             if name == "Shark":
