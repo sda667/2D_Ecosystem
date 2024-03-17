@@ -226,7 +226,9 @@ class GridDisplay:
 
     # AFFICHER UI
     def __draw_ui(self) -> None:
-        self.screen.fill((200, 250, 255))
+        self.screen.fill(MEDIUM_BLUE)
+        screen_rect = pg.Rect(0, 0, *self.screen_size)
+        pg.draw.rect(self.screen, DARKEST_BLUE, screen_rect,4)
         font = pg.font.Font(None, 24)
         font_title = pg.font.Font(None, 36)
         font_title.set_bold(True)
@@ -235,19 +237,29 @@ class GridDisplay:
         title_text = font_title.render("Paramètres", True, (0, 0, 0))
         title_rect = title_text.get_rect(topleft=(800, 50))
         self.screen.blit(title_text, title_rect)
+
+
+
+
+        rect = pg.Rect(45, 95, 250, 500)
+        pg.draw.rect(self.screen, CLAIR_BLUE, rect)
+        pg.draw.rect(self.screen, DARKER_BLUE, rect, 2)
         # Affichage de la température du monde
         temperature_text = font.render(f"Temperature: {self.world.temperature},        <-A   Z->", True, (0, 0, 0))
         temperature_rect = temperature_text.get_rect(topleft=(50, 100))
         self.screen.blit(temperature_text,
                          temperature_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
+
         light_text = font.render(f"Light: {self.world.light},        <-W   X->", True, (0, 0, 0))
         light_rect = light_text.get_rect(topleft=(50, 125))
         self.screen.blit(light_text,
                          light_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
+
         graph_text = font.render(f"Graphe: G", True, (0, 0, 0))
         graph_rect = light_text.get_rect(topleft=(50, 150))
         self.screen.blit(graph_text,
                          graph_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
+
         analyse_text = font.render(f"Analyse: A", True, (0, 0, 0))
         analyse_rect = light_text.get_rect(topleft=(50, 175))
         self.screen.blit(analyse_text,
