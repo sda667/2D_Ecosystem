@@ -114,9 +114,17 @@ class Controller:
                 closest_enemy = enemy
 
         # Détermine la case à atteindre pour s'enfuir
-        dx = closest_enemy[0] - x
-        dy = closest_enemy[1] - y
-        target_position = (x - dx, y - dy)
+        dx = x - closest_enemy[0]
+        if dx > 0:
+            dx = 1
+        else:
+            dx = -1
+        dy = y - closest_enemy[1]
+        if dy > 0:
+            dy = 1
+        else:
+            dy = -1
+        target_position = (x + dx, y + dy)
         if self.world.isplayable_case(*target_position):
             actions = self.astar((x, y), target_position)
             if len(actions) != 0:
@@ -128,7 +136,52 @@ class Controller:
                     self.move(entity, (x, y), (new_x, new_y))
                     self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
                     entity.set_last_movement(dx, dy)
+        else:
+            target_position = self.get_escape_route(dx, dy, x, y)
+            if target_position != None:
+                entity = self.world.entities[(x, y)]
+                self.move(entity, (x, y), target_position)
+                self.entity_positions_list_update(entity_positions, (x, y), target_position)
+                entity.set_last_movement(dx, dy)
 
+
+
+    def get_escape_route(self, dx, dy, x, y):
+        if dx == 0:
+            dx = 1
+            dy = 0
+            target_position = (x + dx, y + dy)
+            if self.world.isplayable_and_free(*target_position):
+                return target_position
+            else:
+                dx = -1
+                dy = 0
+                target_position = (x + dx, y + dy)
+                if self.world.isplayable_and_free(*target_position):
+                    return target_position
+        elif dy == 0:
+            dx = 0
+            dy = 1
+            target_position = (x + dx, y + dy)
+            if self.world.isplayable_and_free(*target_position):
+                return target_position
+            else:
+                dx = 0
+                dy = -1
+                target_position = (x + dx, y + dy)
+                if self.world.isplayable_and_free(*target_position):
+                    return target_position
+        else:
+            old_dx = dx
+            dx = 0
+            target_position = (x + dx, y + dy)
+            if self.world.isplayable_and_free(*target_position):
+                return target_position
+            dx = old_dx
+            dy = 0
+            target_position = (x + dx, y + dy)
+            if self.world.isplayable_and_free(*target_position):
+                return target_position
     # UPDATE DU MOUVEMENT D'UNE ENTITE
 
     def __update_entity(self, x, y, entity_positions):

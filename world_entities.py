@@ -41,7 +41,7 @@ class Entity(ABC):
                 self.current_action = "Flee"
                 return "Flee"
             # TODO change the number here to change the minimal hunger for predation
-            elif (self.entity_hunger >= 30) and (
+            elif (self.entity_hunger >= 40) and (
                     self.check_prey(myposition, entities_position, world)):
                 self.current_action = "Predation"
                 return "Predation"
@@ -340,7 +340,7 @@ class Shark(Entity):
         self.set_entity_hunger(hunger)
 
         self.set_entity_birth(50)
-        self.set_entity_birth_cooldown(100)
+        self.set_entity_birth_cooldown(400)
         self.set_entity_max_age(max_age*simulation_value_A)
         self.set_entity_speed(1)
         self.set_entity_vision(20)
@@ -359,7 +359,7 @@ class Orca(Entity):
         self.set_entity_hunger(hunger)
 
         self.set_entity_birth(250)
-        self.set_entity_birth_cooldown(500)  # not configured yet
+        self.set_entity_birth_cooldown(1000)  # not configured yet
         self.set_entity_max_age(max_age*simulation_value_A)
         self.set_entity_speed(0)  # not configured yet
         self.set_entity_vision(30)  # not configured yet
