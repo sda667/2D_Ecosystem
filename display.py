@@ -260,7 +260,7 @@ class GridDisplay:
         self.screen.blit(graph_text,
                          graph_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
 
-        analyse_text = font.render(f"Analyse: A", True, (0, 0, 0))
+        analyse_text = font.render(f"Analyse: T", True, (0, 0, 0))
         analyse_rect = light_text.get_rect(topleft=(50, 175))
         self.screen.blit(analyse_text,
                          analyse_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
@@ -401,7 +401,7 @@ class GridDisplay:
                         graph = False
                     else:
                         graph = True
-                elif event.type == pg.KEYDOWN and event.key == pg.K_a:
+                elif event.type == pg.KEYDOWN and event.key == pg.K_t:
                     self.analyze = not self.analyze
                 elif event.type == pg.KEYDOWN:
                     controllerUI.control_world(event.key)
