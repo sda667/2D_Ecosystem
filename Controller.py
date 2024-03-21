@@ -2,7 +2,7 @@ import math
 import random
 from priority_queue import PriorityQueue  # USING priority queue used in project 311
 import world
-
+from display import GridDisplay
 # MOUVEMENTS POSSIBLES (ENUM?)
 RIGHT = 0
 LEFT = 1
@@ -81,6 +81,15 @@ class Controller:
 
         actions = self.astar((x, y), closest_prey)
         if len(actions) != 0:
+            if self.world.target == (x, y):
+                target_positions = []
+                current_position = (x, y)
+                for action in actions:
+                    direction = self.directions[action]
+                    next_position = tuple(x + y for x, y in zip(current_position, direction))
+                    target_positions.append(next_position)
+                    current_position = next_position
+                self.world.target_path = target_positions
             action = actions[0]
             dx, dy = self.directions[action]
             new_x, new_y = x + dx, y + dy
@@ -255,6 +264,7 @@ class Controller:
 
     # UPDATE DES ENTITES
     def update_entities(self):
+        self.world.target_path = None
         # Set des positions des entités
         entity_positions = []
         # Récupération des positions des entités

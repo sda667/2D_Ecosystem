@@ -105,6 +105,7 @@ class World:
         self.temperature = 20
         self.light = 5
         self.target: tuple[int, int] = (0, 0)
+        self.target_path = None
 
     # GETTER DE LA GRILLE
     @property

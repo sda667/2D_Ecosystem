@@ -210,12 +210,23 @@ class GridDisplay:
             true_cell_rect = pg.Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
             pg.draw.rect(self.screen, RED, true_cell_rect, 2)
         if (i, j) == self.world.target and self.analyze:
+            if self.world.target_path != None and len(self.world.target_path) != 0:
+                self.draw_target_path()
             _cell_rect = pg.Rect(i * self.cell_size + self.cell_size / 2 - size[0] / 2,
                                  j * self.cell_size + self.cell_size / 2 - size[1] / 2, size[0], size[1])
             pg.draw.rect(self.screen, RED, _cell_rect, 2)
 
+
         # Affichage de la barre de faim
         self.__draw_hunger_bar(entity, i, j)
+
+    def draw_target_path(self):
+        initial_position = self.world.target
+        for position in self.world.target_path:
+            next_position = position
+            pg.draw.line(self.screen, RED, (initial_position[0]*self.cell_size, initial_position[1]*self.cell_size), (position[0]*self.cell_size, position[1]*self.cell_size), 2)
+            initial_position = position
+
 
     # AFFICHER LES ENTITES
     def __draw_entities(self) -> None:
