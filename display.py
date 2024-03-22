@@ -49,6 +49,7 @@ class GridDisplay:
         entities = {}
         for entity_type, path in self.config["EntityPath"].items():
             entities[entity_type] = pg.image.load(path).convert_alpha()
+            print(entities)
         return entities
 
     # SET COLORKEY WITH TOLERANCE
@@ -334,7 +335,7 @@ class GridDisplay:
 
 
     def count_current_elements(self):
-        List_Entityt = ["Shark", "Fish", "Medusa", "Orca", "Crab"]
+        List_Entityt = ["Shark", "Fish", "Medusa", "Orca", "Crab", "Dolphin"]
         dictionary = dict()
         self.i +=1
         for i in range(self.world.entities.shape[0]):
@@ -440,7 +441,7 @@ class GridDisplay:
                     if E_creature:
                         self.__draw_analyze()
                 pg.display.flip()
-                self.clock.tick(5)  # 10 FPS
+                self.clock.tick(10)  # 10 FPS
             else:
                 self.screen.fill((0, 0, 0))  # Wipe the screen
                 self.__draw_ui()

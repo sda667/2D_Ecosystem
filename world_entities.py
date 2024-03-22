@@ -369,4 +369,22 @@ class Orca(Entity):
         self.set_entity_depth(("Surface Sea", "Sea"))
         self.set_entity_life_style("Group")
         self.set_entity_zone(("Near Beach", "Mid Ocean", "Far Ocean"))
-        self.set_entity_preys(["Fish0", "Fish1", "Fish2","Crab", "Medusa", "Shark"])
+        self.set_entity_preys(["Fish0", "Fish1", "Fish2","Crab", "Medusa", "Shark", "Dolphin"])
+
+class Dolphin(Entity):
+    def __init__(self, age=0, hunger=0, max_age=random.randint(30, 50)) -> None:
+        super().__init__()
+        self.set_entity_age(age)
+        self.set_entity_hunger(hunger)
+
+        self.set_entity_birth(100)
+        self.set_entity_birth_cooldown(500)
+        self.set_entity_max_age(max_age*simulation_value_A)
+        self.set_entity_speed(0)
+        self.set_entity_vision(20)
+
+        self.set_entity_name("Dolphin")
+        self.set_entity_type(5)
+        self.set_entity_depth(("Surface Sea", "Sea"))
+        self.set_entity_zone(("Near Beach", "Mid Ocean", "Far Ocean"))
+        self.set_entity_preys(["Fish0", "Fish1", "Fish2", "Crab", "Medusa"])
