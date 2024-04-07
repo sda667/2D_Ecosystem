@@ -96,6 +96,7 @@ class Controller:
             entity = self.world.entities[(x, y)]
             if self.world.isplayable_case(new_x, new_y):
                 if ((new_x, new_y) == closest_prey) and self.world.entities[closest_prey]:
+                    print("Dead by eated")
                     entity.eat(self.world.entities[closest_prey])
                     entity_positions.remove((x, y))
                 self.move(entity, (x, y), (new_x, new_y))
@@ -146,8 +147,10 @@ class Controller:
                     self.entity_positions_list_update(entity_positions, (x, y), (new_x, new_y))
                     entity.set_last_movement(dx, dy)
         else:
-            target_position = self.get_escape_route(dx, dy, x, y)
-            if target_position != None:
+            tuple_position = self.get_escape_route(dx, dy, x, y)
+            if tuple_position != None:
+                dx, dy = tuple_position
+                target_position = (x + dx, y + dy)
                 entity = self.world.entities[(x, y)]
                 self.move(entity, (x, y), target_position)
                 self.entity_positions_list_update(entity_positions, (x, y), target_position)
@@ -161,36 +164,36 @@ class Controller:
             dy = 0
             target_position = (x + dx, y + dy)
             if self.world.isplayable_and_free(*target_position):
-                return target_position
+                return (dx, dy)
             else:
                 dx = -1
                 dy = 0
                 target_position = (x + dx, y + dy)
                 if self.world.isplayable_and_free(*target_position):
-                    return target_position
+                    return (dx, dy)
         elif dy == 0:
             dx = 0
             dy = 1
             target_position = (x + dx, y + dy)
             if self.world.isplayable_and_free(*target_position):
-                return target_position
+                return (dx, dy)
             else:
                 dx = 0
                 dy = -1
                 target_position = (x + dx, y + dy)
                 if self.world.isplayable_and_free(*target_position):
-                    return target_position
+                    return (dx, dy)
         else:
             old_dx = dx
             dx = 0
             target_position = (x + dx, y + dy)
             if self.world.isplayable_and_free(*target_position):
-                return target_position
+                return (dx, dy)
             dx = old_dx
             dy = 0
             target_position = (x + dx, y + dy)
             if self.world.isplayable_and_free(*target_position):
-                return target_position
+                return (dx, dy)
     # UPDATE DU MOUVEMENT D'UNE ENTITE
 
     def __update_entity(self, x, y, entity_positions):
@@ -224,6 +227,7 @@ class Controller:
         if entity.entity_birth > 0:
             entity.set_entity_birth(max(entity.entity_birth - 1, 0))  # to prevent having a negatif value
         if entity.entity_hunger >= 100 or entity.entity_age >= entity.entity_max_age:
+            print("Dead by hunger or overage")
             self.world.clear_entity(x, y)
             entity_positions.remove((x, y))
 

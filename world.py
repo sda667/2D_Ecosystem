@@ -2,6 +2,7 @@ import numpy as np
 from world_cases import *
 from world_entities import *
 import random
+from world_entities import simulation_value_A
 
 class Mountain_builder:
     type = None
@@ -138,8 +139,8 @@ class World:
             for entity in data:
                 entity_data = entity.split()
                 entity_name = entity_data[0]
-                self.set_init_entity(entity_name, int(entity_data[2]), int(entity_data[1]), int(entity_data[3]),
-                                     int(entity_data[4]), int(entity_data[5]))
+                self.set_init_entity(entity_name, int(entity_data[2]), int(entity_data[1]), int(entity_data[3])*simulation_value_A,
+                                     int(entity_data[4]), int(entity_data[5])*simulation_value_A)
 
     # CREER LE MONDE (A PARTIR DE DEUX FICHIERS, UN POUR LE FOND ET UN POUR LE PREMIER PLAN)
     def create_world(self, background, foreground):

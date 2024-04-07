@@ -1,0 +1,13 @@
+{
+  "name": "com.connective.signer",
+  "description": "Connective Chrome Extension",
+  "path": "extension-native.exe",
+  "type": "stdio",
+  "allowed_origins": [
+	"chrome-extension://kclpjmhngbacampgcdojmiedamjbgjjm/",
+    "chrome-extension://iakejplkonnlkckfmnkmnjonjldbhpfa/",
+    "chrome-extension://hjldggdfakblnppfaijhaioieincmlln/",
+    "chrome-extension://fccadhkefgbjhhmhaifdjgabjjjhenek/",
+    "chrome-extension://agapehmkpebacbgojngbpmcojkimlllf/"
+  ]
+}

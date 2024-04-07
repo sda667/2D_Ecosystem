@@ -1,0 +1,13 @@
+Shark 2 2 20 30
+Fish 15 30 5 8
+Crab 0 0 3 6
+Medusa 0 0 2 4
+Orca 2 3 15 20
+
+
+
+Shark 3 3 20 30
+Fish 3 3 5 8
+Crab 0 0 3 6
+Medusa 0 0 2 4
+Orca 4 4 15 20
