@@ -359,7 +359,7 @@ class Orca(Entity):
         self.set_entity_hunger(hunger)
 
         self.set_entity_birth(250)
-        self.set_entity_birth_cooldow()  # not configured yet
+        self.set_entity_birth_cooldown(1000)  # not configured yet
         self.set_entity_max_age(max_age*simulation_value_A)
         self.set_entity_speed(0)  # not configured yet
         self.set_entity_vision(30)  # not configured yet
