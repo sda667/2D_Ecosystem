@@ -1,9 +1,0 @@
-{
-  "name": "com.connective.signer",
-  "description": "Connective FireFox Extension",
-  "path": "extension-native.exe",
-  "type": "stdio",
-  "allowed_extensions": [
-    "{4f643bc8-78f5-49c6-8efd-78ee30289f0b}"
-  ]
-}
