@@ -20,7 +20,8 @@
         "Fish1": "image/fish1.png",
         "Fish2": "image/fish2.png",
         "Shark": "image/Shark1.png",
-        "Orca": "image/whale.png"
+        "Orca": "image/whale.png",
+        "Dolphin": "image/dolphin.png"
     },
     "GridSize": {
         "grid_size_factor": 800,

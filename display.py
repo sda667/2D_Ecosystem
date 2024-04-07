@@ -49,6 +49,7 @@ class GridDisplay:
         entities = {}
         for entity_type, path in self.config["EntityPath"].items():
             entities[entity_type] = pg.image.load(path).convert_alpha()
+            print(entities)
         return entities
 
     # SET COLORKEY WITH TOLERANCE
@@ -186,7 +187,7 @@ class GridDisplay:
         pg.draw.rect(self.screen, (255, 0, 0), hunger_fill_rect)  # Remplissage de la barre de faim
 
     # AFFICHER UNE ENTITE
-    def __draw_entity(self, i, j):
+    def __draw_entity(self, i, j, hungerBar=False) -> None:
         entity = self.world.entities[i, j]
         entity_type = entity.entity_name
         entity_image = self.entities.get(entity_type)
@@ -218,7 +219,8 @@ class GridDisplay:
 
 
         # Affichage de la barre de faim
-        self.__draw_hunger_bar(entity, i, j)
+        if hungerBar:
+            self.__draw_hunger_bar(entity, i, j)
 
     def draw_target_path(self):
         initial_position = self.world.target
@@ -229,11 +231,11 @@ class GridDisplay:
 
 
     # AFFICHER LES ENTITES
-    def __draw_entities(self) -> None:
+    def __draw_entities(self, hungerBar) -> None:
         for i in range(self.world.entities.shape[0]):
             for j in range(self.world.entities.shape[1]):
                 if self.world.entities[i, j]:
-                    self.__draw_entity(i, j)
+                    self.__draw_entity(i, j, hungerBar)
 
     # AFFICHER UI
     def __draw_ui(self) -> None:
@@ -275,6 +277,11 @@ class GridDisplay:
         analyse_rect = light_text.get_rect(topleft=(50, 175))
         self.screen.blit(analyse_text,
                          analyse_rect)  # Ajoutez cette ligne pour afficher la température sur l'écran
+        
+        hunger_text = font.render(f"Hunger: H", True, (0, 0, 0))
+        hunger_rect = light_text.get_rect(topleft=(50, 200))
+        self.screen.blit(hunger_text,
+                         hunger_rect)
 
     # AFFICHER GRAPHE
     def __draw_graph(self):
@@ -328,7 +335,7 @@ class GridDisplay:
 
 
     def count_current_elements(self):
-        List_Entityt = ["Shark", "Fish", "Medusa", "Orca", "Crab"]
+        List_Entityt = ["Shark", "Fish", "Medusa", "Orca", "Crab", "Dolphin"]
         dictionary = dict()
         self.i +=1
         for i in range(self.world.entities.shape[0]):
@@ -395,6 +402,7 @@ class GridDisplay:
     def start_display(self, event_queue) -> None:
         controllerUI = ControllerUI(self.world)
         mainloop = True
+        hungerBar = False
         graph = True
         self.analyze = False
         E_creature = True
@@ -418,12 +426,14 @@ class GridDisplay:
                         graph = True
                 elif event.type == pg.KEYDOWN and event.key == pg.K_t:
                     self.analyze = not self.analyze
+                elif event.type == pg.KEYDOWN and event.key == pg.K_h:
+                    hungerBar = not hungerBar
                 elif event.type == pg.KEYDOWN:
                     controllerUI.control_world(event.key)
             if mainloop:
                 self.screen.fill((0, 0, 0))  # Wipe the screen
                 self.__draw_grid()
-                self.__draw_entities()
+                self.__draw_entities(hungerBar)
                 if graph:
                     self.__draw_graph()
                 if self.analyze and E_creature:
@@ -431,7 +441,7 @@ class GridDisplay:
                     if E_creature:
                         self.__draw_analyze()
                 pg.display.flip()
-                self.clock.tick(5)  # 10 FPS
+                self.clock.tick(10)  # 10 FPS
             else:
                 self.screen.fill((0, 0, 0))  # Wipe the screen
                 self.__draw_ui()
