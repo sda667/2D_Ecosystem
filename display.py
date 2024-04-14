@@ -179,10 +179,11 @@ class GridDisplay:
         hunger_bar_height = 5
         hunger_level = entity.hunger
         max_hunger = 100
-        hunger_bar_rect = pg.Rect(i * self.cell_size, j * self.cell_size - hunger_bar_height,
+        distance_entity_bar = 2
+        hunger_bar_rect = pg.Rect(i * self.cell_size-(hunger_bar_width/2)+ self.cell_size/2, j * self.cell_size - hunger_bar_height - distance_entity_bar,
                                     hunger_bar_width, hunger_bar_height)
         pg.draw.rect(self.screen, (0, 255, 0), hunger_bar_rect)  # Fond de la barre de faim
-        hunger_fill_rect = pg.Rect(i * self.cell_size, j * self.cell_size - hunger_bar_height,
+        hunger_fill_rect = pg.Rect(i * self.cell_size-(hunger_bar_width/2)+ self.cell_size/2, j * self.cell_size - hunger_bar_height- distance_entity_bar ,
                                     hunger_bar_width * hunger_level / max_hunger, hunger_bar_height)
         pg.draw.rect(self.screen, (255, 0, 0), hunger_fill_rect)  # Remplissage de la barre de faim
 
