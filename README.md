@@ -49,7 +49,8 @@ The project is organized around three core pillars:
 
 ## Screenshots
 
-![Simulation Screenshot](https://github.com/user-attachments/assets/98aafaba-b9eb-462c-9898-55cf4b90cd38)
+<img width="1912" height="1040" alt="simulation screenshot" src="https://github.com/user-attachments/assets/bef60586-e954-4321-9ed4-9cb70fa9dd63" />
+
 
 ---
 
